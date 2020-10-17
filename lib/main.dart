@@ -2,32 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<Album> fetchAlbum() async {
+Future<LordsAlbum> fetchAlbum() async {
+
   final response = await http
-      .get('http://lda.data.parliament.uk/lordsregisteredinterests.json');
+      .get('http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=10&_page=0');
+
   if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    return Album.fromJson(jsonDecode(response.body));
-  } else {
+
+  var lordsItemsJson = LordsAlbum.fromJson(jsonDecode(response.body));
+  print(lordsItemsJson);
+
+    }
+   else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
     throw Exception('Failed to load album');
   }
 }
 
-class Album {
-  final String format;
-  final String version;
-  final String name;
-  Album({this.format, this.version, this.name});
 
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      format: json['format'],
-      version: json['version'],
-      name: json['result']['items'][0]['fullName']['_value'],
+
+class LordsAlbum {
+  final Map items;
+  LordsAlbum({this.items});
+
+  factory LordsAlbum.fromJson(Map<String, dynamic> json) {
+    return LordsAlbum(
+      items: json['items']
     );
+  }.
+  String toString() {
+   return '$items';
   }
 }
 
@@ -41,12 +46,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Future<Album> futureAlbum;
+  Future<LordsAlbum> futureAlbum;
 
   @override
   void initState() {
-    int thiessd = "string";
-    print("TEST");
     super.initState();
     futureAlbum = fetchAlbum();
   }
@@ -62,21 +65,21 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('Fetch Data Example'),
         ),
-        body: Center(
-          child: FutureBuilder<Album>(
-            future: futureAlbum,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data.name);
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-
-              // By default, show a loading spinner.
-              return CircularProgressIndicator();
-            },
-          ),
-        ),
+        // body: Center(
+        //   child: FutureBuilder<LordsAlbum>(
+        //     future: futureAlbum,
+        //     builder: (context, snapshot) {
+        //       if (snapshot.hasData) {
+        //         return Text(snapshot.data.name);
+        //       } else if (snapshot.hasError) {
+        //         return Text("${snapshot.error}");
+        //       }
+        //
+        //       // By default, show a loading spinner.
+        //       return CircularProgressIndicator();
+        //     },
+        //   ),
+        // ),
       ),
     );
   }
