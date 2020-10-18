@@ -2,39 +2,67 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<LordsAlbum> fetchAlbum() async {
-
+Future fetchAlbum() async {
+  Map<String, dynamic> results = {};
   final response = await http
-      .get('http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=10&_page=0');
+      .get('http://eldaddp.azurewebsites.net/lordsregisteredinterests.json');
 
   if (response.statusCode == 200) {
+    var lordsSummary = jsonDecode(response.body);
+    num noOfPages = lordsSummary['result']['totalResults'] / 500;
+    noOfPages = noOfPages.ceil();
 
-  var lordsItemsJson = LordsAlbum.fromJson(jsonDecode(response.body));
-  print(lordsItemsJson);
+    for (int i = 0; i <= noOfPages - 1; i++) {
 
+      String resultsKey = 'page $i';
+      results[resultsKey] = await http.get(
+          'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
+
+      print('done page $i');
+      if (results[resultsKey].statusCode == 200) {
+        continue;
+      } else {
+        throw Exception('Failed to load lords');
+      }
     }
-   else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load album');
   }
+
+
+  /*CODE FOR GETTING at the bits we want, creating classes from it and whatnot, here. currently object is
+  {page1: {format: "format": "linked-data-api",
+  "version": "0.2",
+  "result": {
+  "_about": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json",
+  "definition": "http://eldaddp.azurewebsites.net/meta/lordsregisteredinterests.json",
+  "extendedMetadataVersion": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_metadata=all",
+  "first": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_page=0",
+  "hasPart": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json",
+  "isPartOf": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json",
+  "items": [
+{
+  "_about": "http://data.parliament.uk/members/100",
+  "additionalName": {
+  "_value": "Gavin"
+  */
+   
 }
 
 
 
-class LordsAlbum {
-  final Map items;
-  LordsAlbum({this.items});
 
-  factory LordsAlbum.fromJson(Map<String, dynamic> json) {
-    return LordsAlbum(
-      items: json['items']
-    );
-  }.
-  String toString() {
-   return '$items';
-  }
-}
+// class LordsAlbum {
+//   final Map items;
+//   LordsAlbum({this.items});
+
+//   factory LordsAlbum.fromJson(Map<String, dynamic> json) {
+//     return LordsAlbum(
+//       items: json['items']
+//     );
+//   }.
+//   String toString() {
+//    return '$items';
+//   }
+// }
 
 void main() {
   runApp(MyApp());
