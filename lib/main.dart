@@ -3,21 +3,20 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future fetchAlbum() async {
-  Map<String, dynamic> results = {};
+
   final response = await http
       .get('http://eldaddp.azurewebsites.net/lordsregisteredinterests.json');
 
   if (response.statusCode == 200) {
+
+    List<Map<String, dynamic>> listOfLords = [];
+    Map<String, dynamic> results = {};
     var lordsSummary = jsonDecode(response.body);
     num noOfPages = lordsSummary['result']['totalResults'] / 500;
     noOfPages = noOfPages.ceil();
-
     for (int i = 0; i <= noOfPages - 1; i++) {
-
       String resultsKey = 'page $i';
-      results[resultsKey] = await http.get(
-          'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
-
+      results[resultsKey] = await http.get('http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
       print('done page $i');
       if (results[resultsKey].statusCode == 200) {
         continue;
@@ -25,44 +24,20 @@ Future fetchAlbum() async {
         throw Exception('Failed to load lords');
       }
     }
+    results.forEach((k, v) => results[k] = jsonDecode(v.body));
+    results.forEach((k,v) => results[k]['result']['items'].forEach((lord) => listOfLords.add(lord)));
+    listOfLords.forEach((lord) => print(lord['fullName']['_value']));
+    //FAVE LORD???? MINE IS BARONESS SHACKLETON OF BELGRAVIA THOUGH THERE ARE A FEW. I THINK YOUR SPIRIT LORD IS VISCOUNT YOUNGER OF LECKIE OR MAYBE LORD PICKLES
   }
-
-
-  /*CODE FOR GETTING at the bits we want, creating classes from it and whatnot, here. currently object is
-  {page1: {format: "format": "linked-data-api",
-  "version": "0.2",
-  "result": {
-  "_about": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json",
-  "definition": "http://eldaddp.azurewebsites.net/meta/lordsregisteredinterests.json",
-  "extendedMetadataVersion": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_metadata=all",
-  "first": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_page=0",
-  "hasPart": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json",
-  "isPartOf": "http://eldaddp.azurewebsites.net/lordsregisteredinterests.json",
-  "items": [
-{
-  "_about": "http://data.parliament.uk/members/100",
-  "additionalName": {
-  "_value": "Gavin"
-  */
-   
 }
 
 
 
 
-// class LordsAlbum {
-//   final Map items;
-//   LordsAlbum({this.items});
 
-//   factory LordsAlbum.fromJson(Map<String, dynamic> json) {
-//     return LordsAlbum(
-//       items: json['items']
-//     );
-//   }.
-//   String toString() {
-//    return '$items';
-//   }
-// }
+
+
+
 
 void main() {
   runApp(MyApp());
@@ -74,7 +49,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Future<LordsAlbum> futureAlbum;
+  Future futureAlbum;
 
   @override
   void initState() {
