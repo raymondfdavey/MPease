@@ -111,7 +111,14 @@ class _MyAppState extends State<MyApp> {
             future: lords,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data[0].name);
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text('${snapshot.data[index].name}'),
+                    );
+                  },
+                );
               } else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               }
