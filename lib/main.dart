@@ -6,44 +6,21 @@ final String baseUrl =
     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json';
 
 // Ray do:
-// fetchLords to show ALL Lords, so make a new function that 
-// 1. gets how many pages, 
+// fetchLords to show ALL Lords, so make a new function that
+// 1. gets how many pages,
 // 2. function that returns all Encoded Lords (has arguement = page number)
 
-Future<List<Lord>> fetchLords() async {
+Future<List<Lord>> fetchLords(int page) async {
   var response = await http.get(baseUrl); // + page.toString() when needed
   List<Lord> listOfLords = [];
+  num numberOfPages;
 
   if (response.statusCode == 200) {
-    final dynamic result = response.body;
-    List decodedList = jsonDecode(result)['result']['items'];
-
-    for (int i = 0; i <= decodedList.length - 1; i++) {
-      Lord newLord = new Lord();
-      newLord.name = decodedList[i]['fullName']['_value'];
-      listOfLords.add(newLord);
-    }
-  } else {
-    throw Exception('Failed to load lords');
-  }
-  
-  return listOfLords;
-}
-
-Future fetchAlbum() async {
-  final response = await http
-      .get('http://eldaddp.azurewebsites.net/lordsregisteredinterests.json');
-
-  if (response.statusCode == 200) {
-    List<Lord> newListOfLords = new List<Lord>();
-    List<Map<String, dynamic>> listOfLords = [];
-    Map<String, dynamic> results = {};
-    Map<String, dynamic> results2 = {};
     var lordsSummary = jsonDecode(response.body);
-    num noOfPages = lordsSummary['result']['totalResults'] / 500;
-    noOfPages = noOfPages.ceil();
+    numberOfPages = (lordsSummary['result']['totalResults'] / 500).ceil();
+    Map<String, dynamic> results = {};
 
-    for (int i = 0; i <= noOfPages - 1; i++) {
+    for (int i = 0; i <= numberOfPages - 1; i++) {
       String resultsKey = 'page $i';
       results[resultsKey] = await http.get(
           'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
@@ -54,25 +31,67 @@ Future fetchAlbum() async {
         throw Exception('Failed to load lords');
       }
     }
+    List lordObjects = [];
 
     results.forEach((k, v) => results[k] = jsonDecode(v.body));
-
     results.forEach((k, v) =>
-        results[k]['result']['items'].forEach((lord) => listOfLords.add(lord)));
+        results[k]['result']['items'].forEach((lord) => lordObjects.add(lord)));
 
-    for (int i = 0; i <= listOfLords.length - 1; i++) {
+    for (int i = 0; i <= lordObjects.length - 1; i++) {
       Lord newLord = new Lord();
-      newLord.name = listOfLords[i]['fullName']['_value'];
-      newListOfLords.add(newLord);
+      newLord.name = lordObjects[i]['fullName']['_value'];
+      listOfLords.add(newLord);
     }
-
-    print(newListOfLords[0].name);
-    print(newListOfLords[1].name);
-    print(newListOfLords);
-
-    //FAVE LORD???? MINE IS BARONESS SHACKLETON OF BELGRAVIA THOUGH THERE ARE A FEW. I THINK YOUR SPIRIT LORD IS VISCOUNT YOUNGER OF LECKIE OR MAYBE LORD PICKLES
+  } else {
+    throw Exception('Failed to load lords');
   }
+  print(listOfLords[0].name);
+  return listOfLords;
 }
+
+// Future fetchAlbum() async {
+//   final response = await http
+//       .get('http://eldaddp.azurewebsites.net/lordsregisteredinterests.json');
+
+//   if (response.statusCode == 200) {
+//     List<Lord> newListOfLords = new List<Lord>();
+//     List<Map<String, dynamic>> listOfLords = [];
+//     Map<String, dynamic> results = {};
+//     Map<String, dynamic> results2 = {};
+//     var lordsSummary = jsonDecode(response.body);
+//     num noOfPages = lordsSummary['result']['totalResults'] / 500;
+//     noOfPages = noOfPages.ceil();
+
+//     for (int i = 0; i <= noOfPages - 1; i++) {
+//       String resultsKey = 'page $i';
+//       results[resultsKey] = await http.get(
+//           'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
+//       print('done page $i');
+//       if (results[resultsKey].statusCode == 200) {
+//         continue;
+//       } else {
+//         throw Exception('Failed to load lords');
+//       }
+//     }
+
+//     results.forEach((k, v) => results[k] = jsonDecode(v.body));
+
+//     results.forEach((k, v) =>
+//         results[k]['result']['items'].forEach((lord) => listOfLords.add(lord)));
+
+//     for (int i = 0; i <= listOfLords.length - 1; i++) {
+//       Lord newLord = new Lord();
+//       newLord.name = listOfLords[i]['fullName']['_value'];
+//       newListOfLords.add(newLord);
+//     }
+
+//     print(newListOfLords[0].name);
+//     print(newListOfLords[1].name);
+//     print(newListOfLords);
+
+//     //FAVE LORD???? MINE IS BARONESS SHACKLETON OF BELGRAVIA THOUGH THERE ARE A FEW. I THINK YOUR SPIRIT LORD IS VISCOUNT YOUNGER OF LECKIE OR MAYBE LORD PICKLES
+//   }
+// }
 
 class Lord {
   String name;
@@ -84,7 +103,7 @@ class Lord {
 
 // Dan do:
 // class Interest {
-  // string interstTitle
+// string interstTitle
 //}
 
 void main() {
@@ -146,3 +165,55 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+/*
+
+   
+ List<Lord> newListOfLords = new List<Lord>();
+    List<Map<String, dynamic>> listOfLords = [];
+    Map<String, dynamic> results = {};
+    Map<String, dynamic> results2 = {};
+    for (int i = 0; i <= noOfPages - 1; i++) {
+      String resultsKey = 'page $i';
+      results[resultsKey] = await http.get(
+          'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
+      print('done page $i');
+      if (results[resultsKey].statusCode == 200) {
+        continue;
+      } else {
+        throw Exception('Failed to load lords');
+      }
+    }
+
+    results.forEach((k, v) => results[k] = jsonDecode(v.body));
+
+    results.forEach((k, v) =>
+        results[k]['result']['items'].forEach((lord) => listOfLords.add(lord)));
+
+    for (int i = 0; i <= listOfLords.length - 1; i++) {
+      Lord newLord = new Lord();
+      newLord.name = listOfLords[i]['fullName']['_value'];
+      newListOfLords.add(newLord);
+    }
+
+    print(newListOfLords[0].name);
+    print(newListOfLords[1].name);
+    print(newListOfLords);
+
+    //FAVE LORD???? MINE IS BARONESS SHACKLETON OF BELGRAVIA THOUGH THERE ARE A FEW. I THINK YOUR SPIRIT LORD IS VISCOUNT YOUNGER OF LECKIE OR MAYBE LORD PICKLES
+  }
+
+    if (response.statusCode == 200) {
+    final dynamic result = response.body;
+    List decodedList = jsonDecode(result)['result']['items'];
+
+    for (int i = 0; i <= decodedList.length - 1; i++) {
+      Lord newLord = new Lord();
+      newLord.name = decodedList[i]['fullName']['_value'];
+      listOfLords.add(newLord);
+    }
+  } else {
+    throw Exception('Failed to load lords');
+  }
+
+*/
