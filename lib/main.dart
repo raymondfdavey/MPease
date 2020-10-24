@@ -5,7 +5,12 @@ import 'dart:convert';
 final String baseUrl =
     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json';
 
-Future<List<Lord>> fetchLords(int page) async {
+// Ray do:
+// fetchLords to show ALL Lords, so make a new function that 
+// 1. gets how many pages, 
+// 2. function that returns all Encoded Lords (has arguement = page number)
+
+Future<List<Lord>> fetchLords() async {
   var response = await http.get(baseUrl); // + page.toString() when needed
   List<Lord> listOfLords = [];
 
@@ -21,9 +26,7 @@ Future<List<Lord>> fetchLords(int page) async {
   } else {
     throw Exception('Failed to load lords');
   }
-
-  print(listOfLords[0].name);
-  print(listOfLords[1].name);
+  
   return listOfLords;
 }
 
@@ -73,7 +76,16 @@ Future fetchAlbum() async {
 
 class Lord {
   String name;
+  // String posh name?
+  // String ADDITIONAL name?
+  // String FAMILY name?
+  // List<Interest> interests
 }
+
+// Dan do:
+// class Interest {
+  // string interstTitle
+//}
 
 void main() {
   runApp(MyApp());
