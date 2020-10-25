@@ -25,6 +25,8 @@ class _LordsState extends State<LordsList> {
     //converttoClass returns a list of Lord class instances, one for each lord
     listOfLords = convertToClass(lordsResults);
 
+    listOfLords.forEach((lord) => print(lord.interests[0].interestTitle));
+    // print(listOfLords[0].interests[0].interestTitle);
     return listOfLords;
   }
 
@@ -72,7 +74,11 @@ class _LordsState extends State<LordsList> {
     List<Lord> listOfLords = [];
     for (int i = 0; i <= lordObjects.length - 1; i++) {
       Lord newLord = new Lord();
-      newLord.name = lordObjects[i]['fullName']['_value'];
+      newLord.firstName = lordObjects[i]['givenName']['_value'];
+      // newLord.middleName = lordObjects[i]['additionalName']['_value'];
+      newLord.surname = lordObjects[i]['familyName']['_value'];
+      newLord.title = lordObjects[i]['fullName']['_value'];
+      newLord.gender = lordObjects[i]['gender']['_value'];
 
       if (lordObjects[i]['hasRegisteredInterest'] != null) {
         newLord.interests =
@@ -81,8 +87,6 @@ class _LordsState extends State<LordsList> {
 
       listOfLords.add(newLord);
     }
-    print(listOfLords[0].interests[0].interstTitle);
-    print(listOfLords[0].interests[1].interstTitle);
     return listOfLords;
   }
 
@@ -104,7 +108,9 @@ class _LordsState extends State<LordsList> {
   // Need to expand properties in class i.e. 'registeredLate'
   Interest convertToInterest(dynamic rawInterest) {
     Interest newInterest = new Interest();
-    newInterest.interstTitle = rawInterest['registeredInterest']['_value'];
+    newInterest.interestTitle = rawInterest['registeredInterest']['_value'];
+    newInterest.interestCategory =
+        rawInterest["registeredInterestCategory"]["_value"];
     return newInterest;
   }
 
@@ -126,7 +132,7 @@ class _LordsState extends State<LordsList> {
             itemCount: snapshot.data.length,
             itemBuilder: (context, index) {
               return ListTile(
-                title: Text('${snapshot.data[index].name}'),
+                title: Text('${snapshot.data[index].title}'),
               );
             },
           );
@@ -141,24 +147,16 @@ class _LordsState extends State<LordsList> {
 }
 
 class Lord {
-  String name;
-  // String firstName - on ile as ["givenName"]["_value"]
-  // String middleName - ["additionalName"]["_value"]
-  //String surname - ["familyName"]["_value"]
-  // String title - ["fullName"]["_value"]
-  //String gender - ["gender"]["_value"]
+  String firstName;
+  String middleName;
+  String surname;
+  String title;
+  String gender;
   List<Interest> interests;
 }
 
 // Dan do:
 class Interest {
-//if single interest
-//these occur at the same level as familyName, surname etc on the json object ie they are keys on that object
-  String interstTitle;
-// String interestCategory (still a string) - ["registeredInterestCategory"]["_value"]
-//if many interests
-//Int interestNumber - index number + 1 of list at ["hasRegisteredInterest"]
-//String interestCategory - ["hasRegisteredInterest"][INTERGER FOR THE INDEX NUMBER OF THE LIST]["registeredInterestCategory"]["_value"]
-//
-//
+  String interestTitle;
+  String interestCategory;
 }
