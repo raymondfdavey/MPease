@@ -74,15 +74,27 @@ List<Lord> convertToClass(List<Map<String, dynamic>> lordObjects) {
 
 class Lord {
   String name;
-  // String posh name?
-  // String ADDITIONAL name?
-  // String FAMILY name?
+  // String firstName - on ile as ["givenName"]["_value"]
+  // String middleName - ["additionalName"]["_value"]
+  //String surname - ["familyName"]["_value"]
+  // String title - ["fullName"]["_value"]
+  //String gender - ["gender"]["_value"]
   // List<Interest> interests
 }
 
 // Dan do:
 // class Interest {
-// string interstTitle
+//if single interest
+//these occur at the same level as familyName, surname etc on the json object ie they are keys on that object
+// String interest - ["hasRegisteredInterest"]["registeredInterest"]["_value"]
+// String interestCategory (still a string) - ["registeredInterestCategory"]["_value"]
+//if many interests
+//Int interestNumber - index number + 1 of list at ["hasRegisteredInterest"]
+//String interest - ["hasRegisteredInterest"][INTERGER FOR THE INDEX NUMBER OF THE LIST]["registeredInterest"]["_value"]
+//String interestCategory - ["hasRegisteredInterest"][INTERGER FOR THE INDEX NUMBER OF THE LIST]["registeredInterestCategory"]["_value"]
+//
+//
+
 //}
 
 void main() {
