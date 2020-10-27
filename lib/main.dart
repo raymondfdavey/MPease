@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'lords.dart';
+import 'lordsListWidget.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,17 +14,15 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Fetch Data Example',
+      title: 'FUCKLORD by LORDCODE',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Fetch Data Example'),
+          title: Text('FUCKLORD'),
         ),
-        body: Center(
-          child: LordsList()
-        ),
+        body: Center(child: LordsList()),
       ),
     );
   }
