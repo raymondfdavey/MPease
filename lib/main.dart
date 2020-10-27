@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'lordsListWidget.dart';
+import 'lords-list-widget.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,7 +22,9 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('FUCKLORD'),
         ),
-        body: Center(child: LordsList()),
+        body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+            child: LordsList()),
       ),
     );
   }
