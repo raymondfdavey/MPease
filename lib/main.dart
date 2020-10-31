@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
                         cursorColor: Colors.white,
                         decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: "search de cunts",
+                            hintText: "searSch de cunts",
                             hintStyle: TextStyle(
                               color: Colors.white70,
                             )),
