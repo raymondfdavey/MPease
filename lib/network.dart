@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'classes.dart';
 import 'utilities.dart';
+import 'userbloc.dart';
 
 final String baseUrl =
     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json';
@@ -15,6 +16,8 @@ Future<List<Lord>> fetchLords() async {
 */
   List<Map<String, dynamic>> lordsResults = await getLordsFromApi(1);
   listOfLords = convertToClass(lordsResults);
+  userBloc.userController.sink.add(listOfLords);
+
   return listOfLords;
 }
 
