@@ -15,19 +15,17 @@ class _MyAppState extends State<MyApp> {
 
   Widget cusSearchBar = Text("FUCKLORDS");
   FocusNode myFocusNode;
+  String searchText = "initial text";
 
   @override
   void initState() {
     super.initState();
-
     myFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
-    // Clean up the focus node when the Form is disposed.
     myFocusNode.dispose();
-
     super.dispose();
   }
 
@@ -53,17 +51,24 @@ class _MyAppState extends State<MyApp> {
                     if (this.cusIcon.icon == Icons.search) {
                       this.cusIcon = Icon(Icons.cancel);
                       this.cusSearchBar = TextField(
+                        onChanged: (text) {
+                          print("IN ON CHANGED" + text);
+                          setState(() {
+                            this.searchText = text;
+                          });
+                        },
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.go,
                         autofocus: true,
                         showCursor: true,
                         focusNode: myFocusNode,
                         cursorColor: Colors.white,
                         decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: "searSch de cunts",
+                            hintText: "search de cunts",
                             hintStyle: TextStyle(
                               color: Colors.white70,
                             )),
-                        textInputAction: TextInputAction.go,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20.0,
@@ -75,15 +80,16 @@ class _MyAppState extends State<MyApp> {
                     }
                   });
                 }),
-            IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
+            // IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
           ],
           titleSpacing: (40.0),
           elevation: 30.0,
           title: cusSearchBar,
         ),
         body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: LordsList()),
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: LordsList(searchText: searchText),
+        ),
       ),
     );
   }

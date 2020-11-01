@@ -3,16 +3,36 @@ import 'network.dart';
 import 'classes.dart';
 
 final List<int> colorCodes = <int>[600, 500, 100];
-// try and impliment expansion tile whereby each lord is an expandable tile where the lords title is the title of the tile, then when you click it reveals some more details invluding an expandable interests tile where the title is registered interests and a number
 
+// try and impliment expansion tile whereby each lord is an expandable tile where the lords title is the title of the tile, then when you click it reveals some more details invluding an expandable interests tile where the title is registered interests and a number
 class LordsList extends StatefulWidget {
+  final String searchText;
+  LordsList({Key key, this.searchText}) : super(key: key);
   @override
   _LordsState createState() => _LordsState();
 }
 
 class _LordsState extends State<LordsList> {
   Future<List<Lord>> lords;
+  List<Lord> copyOfLords;
 
+  Future<List<Lord>> filterLords(String searchTerm) {
+    print("In filter lords" + searchTerm);
+    Future<List<Lord>> filteredLords = Future.wait([lords]).then((results) =>
+        results[0].where((lord) => lord.title.contains(searchTerm)).toList());
+    return filteredLords;
+  }
+
+  //   /*
+  // Future.wait([fetchLords()])
+  //       .then((List<List<Lord>> results) => copyOfLords = results[0]);
+  //   */
+  //   print("In filter lords" + searchTerm);
+  //   // List<Lord> filteredLords =
+  //   //     lordList.where((lord) => lord.surname.contains(searchTerm)).toList();
+  //   // print(filteredLords.length);
+  //   // return filteredLords;
+  // }
   @override
   void initState() {
     super.initState();
@@ -21,6 +41,13 @@ class _LordsState extends State<LordsList> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.searchText != "initial text") {
+      print("in WIDGET");
+      print(widget.searchText);
+      setState(() {
+        lords = filterLords(widget.searchText);
+      });
+    }
     return FutureBuilder<List<Lord>>(
       future: lords,
       builder: (context, snapshot) {

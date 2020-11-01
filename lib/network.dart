@@ -14,7 +14,10 @@ Future<List<Lord>> fetchLords() async {
   num numberOfPages = await getPageNumbers(baseUrl, 500);
   List<Map<String, dynamic>> lordsResults = await getLordsFromApi(numberOfPages);
 */
-  List<Map<String, dynamic>> lordsResults = await getLordsFromApi(1);
+  num numberOfPages = await getPageNumbers(baseUrl, 500);
+  List<Map<String, dynamic>> lordsResults =
+      await getLordsFromApi(numberOfPages);
+  // List<Map<String, dynamic>> lordsResults = await getLordsFromApi(1);
   listOfLords = convertToClass(lordsResults);
   userBloc.userController.sink.add(listOfLords);
 
