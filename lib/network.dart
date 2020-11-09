@@ -7,6 +7,15 @@ import 'userbloc.dart';
 final String baseUrl =
     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json';
 
+// Future<Response> fetchLordsLongList() async {
+//   Future<Response> result;
+
+//   result = await http.get(
+//       'http://data.parliament.uk/membersdataplatform/services/mnis/members/query/house=Lords/');
+
+//   return result;
+// }
+
 Future<List<Lord>> fetchLords() async {
   List<Lord> listOfLords;
   /*
@@ -44,7 +53,7 @@ Future<List<Map<String, dynamic>>> getLordsFromApi(int pages) async {
     // results[resultsKey] = await http.get(
     //     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
     results[resultsKey] = await http.get(
-        'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=50&_page=$i');
+        'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
     print('done page $i');
     if (results[resultsKey].statusCode == 200) {
       continue;

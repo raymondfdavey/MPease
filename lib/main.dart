@@ -50,6 +50,7 @@ class _MyAppState extends State<MyApp> {
                   setState(() {
                     if (this.cusIcon.icon == Icons.search) {
                       this.cusIcon = Icon(Icons.cancel);
+
                       this.cusSearchBar = TextField(
                         onChanged: (text) {
                           print("IN ON CHANGED" + text);
@@ -75,8 +76,14 @@ class _MyAppState extends State<MyApp> {
                         ),
                       );
                     } else {
-                      this.cusIcon = Icon(Icons.search);
-                      this.cusSearchBar = Text("FUCKLORDS");
+                      setState(() {
+                        print("resetting state");
+                        this.searchText = "initial text";
+                        print(this.searchText);
+
+                        this.cusIcon = Icon(Icons.search);
+                        this.cusSearchBar = Text("FUCKLORDS");
+                      });
                     }
                   });
                 }),

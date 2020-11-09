@@ -13,14 +13,30 @@ class LordsList extends StatefulWidget {
 }
 
 class _LordsState extends State<LordsList> {
+  Future<List<Lord>> lordsUntouched;
   Future<List<Lord>> lords;
   List<Lord> copyOfLords;
 
-  Future<List<Lord>> filterLords(String searchTerm) {
+  void filterLords(String searchTerm) {
     print("In filter lords" + searchTerm);
-    Future<List<Lord>> filteredLords = Future.wait([lords]).then((results) =>
-        results[0].where((lord) => lord.title.contains(searchTerm)).toList());
-    return filteredLords;
+
+    if (searchTerm == "initial text") {
+      setState(() {
+        lords = lordsUntouched;
+      });
+    } else {
+      Future<List<Lord>> forFilter = lordsUntouched;
+      Future<List<Lord>> filteredLords = lordsUntouched;
+
+      filteredLords = Future.wait([forFilter]).then((results) => results[0]
+          .where((lord) =>
+              lord.title.toLowerCase().contains(searchTerm.toLowerCase()))
+          .toList());
+
+      setState(() {
+        lords = filteredLords;
+      });
+    }
   }
 
   //   /*
@@ -37,17 +53,15 @@ class _LordsState extends State<LordsList> {
   void initState() {
     super.initState();
     lords = fetchLords();
+    lordsUntouched = lords;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.searchText != "initial text") {
-      print("in WIDGET");
-      print(widget.searchText);
-      setState(() {
-        lords = filterLords(widget.searchText);
-      });
-    }
+    print("in WIDGET");
+    print(widget.searchText);
+    filterLords(widget.searchText);
+
     return FutureBuilder<List<Lord>>(
       future: lords,
       builder: (context, snapshot) {
