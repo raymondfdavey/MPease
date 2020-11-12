@@ -13,31 +13,99 @@ class LordsList extends StatefulWidget {
 }
 
 class _LordsState extends State<LordsList> {
-  Future<List<Lord>> lordsUntouched;
-  Future<List<Lord>> lords;
-  List<Lord> copyOfLords;
+  List<Lord> lords;
+  List<Lord> lordsUntouched;
+  bool gotLords = false;
+  // List<Map> detailsLords;
+  Future someFuture;
 
-  void filterLords(String searchTerm) {
-    print("In filter lords" + searchTerm);
-
-    if (searchTerm == "initial text") {
-      setState(() {
-        lords = lordsUntouched;
-      });
-    } else {
-      Future<List<Lord>> forFilter = lordsUntouched;
-      Future<List<Lord>> filteredLords = lordsUntouched;
-
-      filteredLords = Future.wait([forFilter]).then((results) => results[0]
-          .where((lord) =>
-              lord.title.toLowerCase().contains(searchTerm.toLowerCase()))
-          .toList());
-
-      setState(() {
-        lords = filteredLords;
-      });
-    }
+  Future<List<List>> getLords2() async {
+    print("GETTING LORDS");
+    List<Lord> lordsFromCall = await fetchLords();
+    List lordsDeetsFromCall = await fetchLordsExtended();
+    print(lordsFromCall.length);
+    print(lordsDeetsFromCall.length);
+    return [lordsFromCall, lordsDeetsFromCall];
   }
+
+  Future<void> getLords() async {
+    print('WAITING ON LORDS');
+    List<List> twoReturns = await getLords2();
+
+    print("GOT LORDS");
+    List<Lord> lordsFromCall = twoReturns[0];
+    List lordsDeetsFromCall = twoReturns[1];
+    List idsToDelete = [];
+    print(lordsFromCall.length);
+    print(lordsDeetsFromCall.length);
+    List match;
+    int i = 0;
+    int j = 0;
+    lordsFromCall.forEach((lordInstance) => {
+          print('IN FOR EACH START'),
+          // print(lordInstance.title),
+          // print(lordInstance.id),
+          match = lordsDeetsFromCall
+              .where((lordMap) => lordMap["@Member_Id"] == lordInstance.id)
+              .toList(),
+          if (match.length == 0)
+            {print("in zero matches"), i++, idsToDelete.add(lordInstance.id)}
+          else
+            {
+              // print(match[0]["Gender"]),
+              // print(match.runtimeType),
+              // print("in matches"),
+              // // print(match["Gender"]),
+              // // print(match["DateOfBirth"]),
+              // // print(match["Party"]["#text"]),
+              // // print(match["MemberFrom"]),
+              // // print(match["HouseStartDate"]),
+              // // print(match["CurrentStatus"]["@IsActive"]),
+              j++,
+              lordInstance.gender = match[0]["Gender"],
+              lordInstance.dob = match[0]["DateOfBirth"],
+              lordInstance.party = match[0]["Party"]["#text"],
+              lordInstance.peerageType = match[0]["MemberFrom"],
+              lordInstance.beganLording = match[0]["HouseStartDate"],
+              lordInstance.isActive = match[0]["CurrentStatus"]["@IsActive"],
+            }
+        });
+    print("BEFORE DELETE");
+    print(lordsFromCall.length);
+    idsToDelete
+        .forEach((id) => lordsFromCall.removeWhere((lord) => lord.id == id));
+    print("AFTER DELETE");
+    print(lordsFromCall.length);
+    print(lordsFromCall[0].dob);
+
+    setState(() {
+      lords = lordsFromCall;
+      lordsUntouched = lordsFromCall;
+      gotLords = true;
+    });
+  }
+
+  // void filterLords(String searchTerm) {
+  //   print("In filter lords" + searchTerm);
+
+  //   if (searchTerm == "initial text") {
+  //     setState(() {
+  //       lords = lordsUntouched;
+  //     });
+  //   } else {
+  //     List<Lord> forFilter = lordsUntouched;
+  //     List<Lord> filteredLords = lordsUntouched;
+
+  //     filteredLords = forFilter
+  //         .where((lord) =>
+  //             lord.title.toLowerCase().contains(searchTerm.toLowerCase()))
+  //         .toList();
+
+  //     setState(() {
+  //       lords = filteredLords;
+  //     });
+  //   }
+  // }
 
   //   /*
   // Future.wait([fetchLords()])
@@ -52,18 +120,17 @@ class _LordsState extends State<LordsList> {
   @override
   void initState() {
     super.initState();
-    lords = fetchLords();
-    lordsUntouched = lords;
+    getLords();
   }
 
   @override
   Widget build(BuildContext context) {
     print("in WIDGET");
     print(widget.searchText);
-    filterLords(widget.searchText);
+    // filterLords(widget.searchText);
 
     return FutureBuilder<List<Lord>>(
-      future: lords,
+      future: someFuture,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return ListView.builder(

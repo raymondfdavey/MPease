@@ -2,7 +2,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'classes.dart';
 import 'utilities.dart';
-import 'userbloc.dart';
 
 final String baseUrl =
     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json';
@@ -15,6 +14,28 @@ final String baseUrl =
 
 //   return result;
 // }
+Future<Map> getLordsExtendedFromApi() async {
+  print("IN GETLORDS FROM API");
+  http.Response returnedLordsDeets;
+  Map<String, dynamic> jsonReturnedLords;
+  returnedLordsDeets = await http.get(
+      'http://data.parliament.uk/membersdataplatform/services/mnis/members/query/house=Lords/',
+      headers: {"Content-Type": "application/json; charset=utf-8"});
+  print("GOT LORDS DEETS");
+  jsonReturnedLords = jsonDecode(returnedLordsDeets.body);
+
+  return jsonReturnedLords;
+}
+
+Future<List> fetchLordsExtended() async {
+  print("in fetchlords extended");
+  var extendedLordList;
+  List justLords;
+  extendedLordList = await getLordsExtendedFromApi();
+  print("BACK IN FETCH LORDS");
+  justLords = extendedLordList["Members"]["Member"];
+  return justLords;
+}
 
 Future<List<Lord>> fetchLords() async {
   List<Lord> listOfLords;
@@ -28,7 +49,6 @@ Future<List<Lord>> fetchLords() async {
       await getLordsFromApi(numberOfPages);
   // List<Map<String, dynamic>> lordsResults = await getLordsFromApi(1);
   listOfLords = convertToClass(lordsResults);
-  userBloc.userController.sink.add(listOfLords);
 
   return listOfLords;
 }
