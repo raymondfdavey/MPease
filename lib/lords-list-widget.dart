@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
+import "utilities.dart";
 
 final List<int> colorCodes = <int>[600, 500, 100];
 
@@ -54,7 +55,7 @@ class _LordsState extends State<LordsList> {
             {
               // print(match[0]["Gender"]),
               // print(match.runtimeType),
-              // print("in matches"),
+              // print("in matches"),ß
               // // print(match["Gender"]),
               // // print(match["DateOfBirth"]),
               // // print(match["Party"]["#text"]),
@@ -64,9 +65,15 @@ class _LordsState extends State<LordsList> {
               j++,
               lordInstance.gender = match[0]["Gender"],
               lordInstance.dob = match[0]["DateOfBirth"],
+              lordInstance.dobFormatted = getDate(match[0]["DateOfBirth"]),
+              lordInstance.age = getYears(match[0]["DateOfBirth"]),
               lordInstance.party = match[0]["Party"]["#text"],
               lordInstance.peerageType = match[0]["MemberFrom"],
               lordInstance.beganLording = match[0]["HouseStartDate"],
+              lordInstance.beganLordingInYears =
+                  getYears(match[0]["HouseStartDate"]),
+              lordInstance.beganLordingFormatted =
+                  getDate(match[0]["HouseStartDate"]),
               lordInstance.isActive = match[0]["CurrentStatus"]["@IsActive"],
             }
         });
@@ -127,7 +134,7 @@ class _LordsState extends State<LordsList> {
   Widget build(BuildContext context) {
     print("in WIDGET");
     print(widget.searchText);
-    if (widget.searchText != "initial text") filterLords(widget.searchText);
+    filterLords(widget.searchText);
 
     return gotLords
         ? ListView.builder(
@@ -141,11 +148,15 @@ class _LordsState extends State<LordsList> {
                         Text('${lords[index].firstName}'),
                         Text('${lords[index].surname}'),
                         Text('${lords[index].gender}'),
-                        Text('${lords[index].dob}'),
+                        Text('dob: ${lords[index].dobFormatted}'),
+                        Text('age: ${lords[index].age}'),
                         Text('${lords[index].party}'),
                         Text('${lords[index].peerageType}'),
-                        Text('${lords[index].isActive}'),
-                        Text('${lords[index].beganLording}'),
+                        Text('isActive: ${lords[index].isActive}'),
+                        Text(
+                            'started lording: ${lords[index].beganLordingFormatted}'),
+                        Text(
+                            'years lording: ${lords[index].beganLordingInYears}'),
                         ExpansionTile(
                             title: Text('Registered Interests'),
                             children: <Widget>[
