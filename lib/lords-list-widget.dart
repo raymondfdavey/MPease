@@ -42,14 +42,14 @@ class _LordsState extends State<LordsList> {
     int i = 0;
     int j = 0;
     lordsFromCall.forEach((lordInstance) => {
-          print('IN FOR EACH START'),
+          // print('IN FOR EACH START'),
           // print(lordInstance.title),
           // print(lordInstance.id),
           match = lordsDeetsFromCall
               .where((lordMap) => lordMap["@Member_Id"] == lordInstance.id)
               .toList(),
           if (match.length == 0)
-            {print("in zero matches"), i++, idsToDelete.add(lordInstance.id)}
+            {i++, idsToDelete.add(lordInstance.id)}
           else
             {
               // print(match[0]["Gender"]),
@@ -85,27 +85,27 @@ class _LordsState extends State<LordsList> {
     });
   }
 
-  // void filterLords(String searchTerm) {
-  //   print("In filter lords" + searchTerm);
+  void filterLords(String searchTerm) {
+    print("In filter lords" + searchTerm);
 
-  //   if (searchTerm == "initial text") {
-  //     setState(() {
-  //       lords = lordsUntouched;
-  //     });
-  //   } else {
-  //     List<Lord> forFilter = lordsUntouched;
-  //     List<Lord> filteredLords = lordsUntouched;
+    if (searchTerm == "initial text") {
+      setState(() {
+        lords = lordsUntouched;
+      });
+    } else {
+      List<Lord> forFilter = lordsUntouched;
+      List<Lord> filteredLords = lordsUntouched;
 
-  //     filteredLords = forFilter
-  //         .where((lord) =>
-  //             lord.title.toLowerCase().contains(searchTerm.toLowerCase()))
-  //         .toList();
+      filteredLords = forFilter
+          .where((lord) =>
+              lord.title.toLowerCase().contains(searchTerm.toLowerCase()))
+          .toList();
 
-  //     setState(() {
-  //       lords = filteredLords;
-  //     });
-  //   }
-  // }
+      setState(() {
+        lords = filteredLords;
+      });
+    }
+  }
 
   //   /*
   // Future.wait([fetchLords()])
@@ -127,65 +127,45 @@ class _LordsState extends State<LordsList> {
   Widget build(BuildContext context) {
     print("in WIDGET");
     print(widget.searchText);
-    // filterLords(widget.searchText);
+    if (widget.searchText != "initial text") filterLords(widget.searchText);
 
-    return FutureBuilder<List<Lord>>(
-      future: someFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                return ExpansionTile(
-                    title: Text('${snapshot.data[index].title}'),
-                    children: <Widget>[
-                      Column(
-                        children: [
-                          Text('${snapshot.data[index].firstName}'),
-                          Text('${snapshot.data[index].surname}'),
-                          Text('${snapshot.data[index].gender}'),
-                          ExpansionTile(
-                              title: Text('Registered Interests'),
-                              children: <Widget>[
-                                Text("HI HI HI"),
-                                Text(
-                                    '${snapshot.data[index].interests[0].interestCategory}'),
-                                SizedBox(
-                                    height: 100,
-                                    child: ListView.builder(
-                                        scrollDirection: Axis.vertical,
-                                        itemCount: snapshot
-                                            .data[index].interests.length,
-                                        itemBuilder: (BuildContext ctx, int i) {
-                                          return new Text(
-                                              '${snapshot.data[index].interests[i].interestTitle}');
-                                        }))
-                              ])
-                        ],
-                      )
-                    ]);
-              });
-        }
-        // Text(
-        //     '${snapshot.data[index].interests[0].interestTitle}'),
-        // Text(
-        //     '${snapshot.data[index].interests[0].interestCategory}'),
-
-        //   height: 50,
-        //   color: Colors.amber[colorCodes[i]],
-        //   child: Column(children: [
-        //     Text(
-        //         ' ${snapshot.data[index].interests[i].interestTitle}'),
-        //     Text(
-        //         ' ${snapshot.data[index].interests[i].interestTitle}'),
-        //   ]),
-        // );
-        else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-        // By default, show a loading spinner.
-        return CircularProgressIndicator();
-      },
-    );
+    return gotLords
+        ? ListView.builder(
+            itemCount: lords.length,
+            itemBuilder: (context, index) {
+              return ExpansionTile(
+                  title: Text('${lords[index].title}'),
+                  children: <Widget>[
+                    Column(
+                      children: [
+                        Text('${lords[index].firstName}'),
+                        Text('${lords[index].surname}'),
+                        Text('${lords[index].gender}'),
+                        Text('${lords[index].dob}'),
+                        Text('${lords[index].party}'),
+                        Text('${lords[index].peerageType}'),
+                        Text('${lords[index].isActive}'),
+                        Text('${lords[index].beganLording}'),
+                        ExpansionTile(
+                            title: Text('Registered Interests'),
+                            children: <Widget>[
+                              Text("HI HI HI"),
+                              Text(
+                                  '${lords[index].interests[0].interestCategory}'),
+                              SizedBox(
+                                  height: 100,
+                                  child: ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      itemCount: lords[index].interests.length,
+                                      itemBuilder: (BuildContext ctx, int i) {
+                                        return new Text(
+                                            '${lords[index].interests[i].interestTitle}');
+                                      }))
+                            ])
+                      ],
+                    )
+                  ]);
+            })
+        : CircularProgressIndicator();
   }
 }
