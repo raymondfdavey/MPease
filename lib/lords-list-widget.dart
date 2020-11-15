@@ -17,6 +17,7 @@ class _LordsState extends State<LordsList> {
   List<Lord> lords;
   List<Lord> lordsUntouched;
   bool gotLords = false;
+  List<String> favourites;
   // List<Map> detailsLords;
   Future someFuture;
 
