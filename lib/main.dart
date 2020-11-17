@@ -16,6 +16,7 @@ class _MyAppState extends State<MyApp> {
   Widget cusSearchBar = Text("FUCKLORDS");
   FocusNode myFocusNode;
   String searchText = "initial text";
+  bool goToSaved = false;
 
   @override
   void initState() {
@@ -29,6 +30,17 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
+  goToSavedToggle() {
+    print("HERE");
+    goToSaved
+        ? setState(() {
+            goToSaved = false;
+          })
+        : setState(() {
+            goToSaved = true;
+          });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,8 +52,8 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.menu),
+            onPressed: goToSavedToggle,
+            icon: Icon(Icons.list),
           ),
           actions: <Widget>[
             IconButton(
@@ -95,7 +107,11 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
-          child: LordsList(searchText: searchText),
+          child: LordsList(
+            searchText: searchText,
+            saved: goToSaved,
+            savedToggle: goToSavedToggle,
+          ),
         ),
       ),
     );

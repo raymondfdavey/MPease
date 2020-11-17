@@ -1,3 +1,4 @@
+import 'package:MPease/LordListBuilder.dart';
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
@@ -7,8 +8,11 @@ final List<int> colorCodes = <int>[600, 500, 100];
 
 // try and impliment expansion tile whereby each lord is an expandable tile where the lords title is the title of the tile, then when you click it reveals some more details invluding an expandable interests tile where the title is registered interests and a number
 class LordsList extends StatefulWidget {
+  final bool saved;
   final String searchText;
-  LordsList({Key key, this.searchText}) : super(key: key);
+  final savedToggle;
+  LordsList({Key key, this.searchText, this.saved, this.savedToggle})
+      : super(key: key);
   @override
   _LordsState createState() => _LordsState();
 }
@@ -18,6 +22,7 @@ class _LordsState extends State<LordsList> {
   List<Lord> lordsUntouched;
   bool gotLords = false;
   List<String> favourites;
+  final faveLords = Set<Lord>();
   // List<Map> detailsLords;
   Future someFuture;
 
@@ -115,16 +120,32 @@ class _LordsState extends State<LordsList> {
     }
   }
 
-  //   /*
-  // Future.wait([fetchLords()])
-  //       .then((List<List<Lord>> results) => copyOfLords = results[0]);
-  //   */
-  //   print("In filter lords" + searchTerm);
-  //   // List<Lord> filteredLords =
-  //   //     lordList.where((lord) => lord.surname.contains(searchTerm)).toList();
-  //   // print(filteredLords.length);
-  //   // return filteredLords;
-  // }
+  void pushSavedLords() async {
+    print("PUSHING LORDS");
+    print(faveLords);
+    Future.delayed(Duration.zero, () {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          // NEW lines from here...
+          builder: (BuildContext context) {
+            return Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      widget.savedToggle();
+                      Navigator.of(context).pop();
+                    }),
+                title: Text('Saved Suggestions'),
+              ),
+              body: LordsListBuilder(faveLords.toList()),
+            );
+          }, // ...to here.
+        ),
+      );
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -136,13 +157,31 @@ class _LordsState extends State<LordsList> {
     print("in WIDGET");
     print(widget.searchText);
     filterLords(widget.searchText);
+    if (widget.saved == true) {
+      pushSavedLords();
+    }
 
     return gotLords
         ? ListView.builder(
             itemCount: lords.length,
             itemBuilder: (context, index) {
+              final alreadySaved = faveLords.contains(lords[index]);
               return ExpansionTile(
                   title: Text('${lords[index].title}'),
+                  leading: IconButton(
+                      icon: alreadySaved
+                          ? Icon(Icons.favorite)
+                          : Icon(Icons.favorite_border),
+                      color: alreadySaved ? Colors.red : null,
+                      onPressed: () {
+                        setState(() {
+                          if (alreadySaved) {
+                            faveLords.remove(lords[index]);
+                          } else {
+                            faveLords.add(lords[index]);
+                          }
+                        });
+                      }),
                   children: <Widget>[
                     Column(
                       children: [
