@@ -17,6 +17,15 @@ class Lord {
   List<Interest> interests;
 }
 
+class LordBaseList {
+  List<LordListedViewModel> member;
+}
+
+class LordListedViewModel {
+  String displayName;
+  // bool isActive;
+}
+
 // Dan do:
 class Interest {
   String interestTitle;

@@ -23,23 +23,23 @@ String getId(String url) {
   return aStr;
 }
 
-List<Lord> convertToClass(List<Map<String, dynamic>> lordObjects) {
-  List<Lord> listOfLords = [];
-  for (int i = 0; i <= lordObjects.length - 1; i++) {
-    Lord newLord = new Lord();
-    newLord.firstName = lordObjects[i]['givenName']['_value'];
-    newLord.surname = lordObjects[i]['familyName']['_value'];
-    newLord.title = lordObjects[i]['fullName']['_value'];
-    newLord.gender = lordObjects[i]['gender']['_value'];
-    newLord.id = getId(lordObjects[i]["_about"]);
+// List<Lord> convertToClass(List<Map<String, dynamic>> lordObjects) {
+//   List<Lord> listOfLords = [];
+//   for (int i = 0; i <= lordObjects.length - 1; i++) {
+//     Lord newLord = new Lord();
+//     newLord.firstName = lordObjects[i]['givenName']['_value'];
+//     newLord.surname = lordObjects[i]['familyName']['_value'];
+//     newLord.title = lordObjects[i]['fullName']['_value'];
+//     newLord.gender = lordObjects[i]['gender']['_value'];
+//     newLord.id = getId(lordObjects[i]["_about"]);
 
-    if (lordObjects[i]['hasRegisteredInterest'] != null) {
-      newLord.interests = getInterests(lordObjects[i]['hasRegisteredInterest']);
-    }
-    listOfLords.add(newLord);
-  }
-  return listOfLords;
-}
+//     if (lordObjects[i]['hasRegisteredInterest'] != null) {
+//       newLord.interests = getInterests(lordObjects[i]['hasRegisteredInterest']);
+//     }
+//     listOfLords.add(newLord);
+//   }
+//   return listOfLords;
+// }
 
 List<Interest> getInterests(dynamic rawInterests) {
   List<Interest> listOfInterests = [];

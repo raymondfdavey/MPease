@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
-import "utilities.dart";
 
 final List<int> colorCodes = <int>[600, 500, 100];
 
@@ -14,80 +13,91 @@ class LordsList extends StatefulWidget {
 }
 
 class _LordsState extends State<LordsList> {
-  List<Lord> lords;
-  List<Lord> lordsUntouched;
+  List<LordListedViewModel> lords;
+  List<LordListedViewModel> lordsUntouched;
+  // List<Lord> lords;
+  // List<Lord> lordsUntouched;
   bool gotLords = false;
   // List<Map> detailsLords;
   Future someFuture;
 
-  Future<List<List>> getLords2() async {
-    print("GETTING LORDS");
-    List<Lord> lordsFromCall = await fetchLords();
-    List lordsDeetsFromCall = await fetchLordsExtended();
-    print(lordsFromCall.length);
-    print(lordsDeetsFromCall.length);
-    return [lordsFromCall, lordsDeetsFromCall];
+  // Future<List<List>> getLords2() async {
+  //   print("GETTING LORDS");
+  //   // List<Lord> lordsFromCall = [];
+  //   // List<Lord> lordsFromCall = await fetchLords_OLD();
+  //   List lordsDeetsFromCall = await fetchLordsExtended();
+
+  //   // print(lordsFromCall.length);
+  //   print(lordsDeetsFromCall.length);
+  //   // return [lordsFromCall, lordsDeetsFromCall];
+  // }
+
+  Future<List<LordListedViewModel>> getLordsNamesOnly() async {
+    List<LordListedViewModel> newLordsList = await transformToLordNamesList();
+    return newLordsList;
   }
 
   Future<void> getLords() async {
     print('WAITING ON LORDS');
-    List<List> twoReturns = await getLords2();
-
+    // List<List> twoReturns = await getLords2();
+    List<LordListedViewModel> lordsNamesOnly = await getLordsNamesOnly();
     print("GOT LORDS");
-    List<Lord> lordsFromCall = twoReturns[0];
-    List lordsDeetsFromCall = twoReturns[1];
-    List idsToDelete = [];
-    print(lordsFromCall.length);
-    print(lordsDeetsFromCall.length);
-    List match;
-    int i = 0;
-    int j = 0;
-    lordsFromCall.forEach((lordInstance) => {
-          // print('IN FOR EACH START'),
-          // print(lordInstance.title),
-          // print(lordInstance.id),
-          match = lordsDeetsFromCall
-              .where((lordMap) => lordMap["@Member_Id"] == lordInstance.id)
-              .toList(),
-          if (match.length == 0)
-            {i++, idsToDelete.add(lordInstance.id)}
-          else
-            {
-              // print(match[0]["Gender"]),
-              // print(match.runtimeType),
-              // print("in matches"),ß
-              // // print(match["Gender"]),
-              // // print(match["DateOfBirth"]),
-              // // print(match["Party"]["#text"]),
-              // // print(match["MemberFrom"]),
-              // // print(match["HouseStartDate"]),
-              // // print(match["CurrentStatus"]["@IsActive"]),
-              j++,
-              lordInstance.gender = match[0]["Gender"],
-              lordInstance.dob = match[0]["DateOfBirth"],
-              lordInstance.dobFormatted = getDate(match[0]["DateOfBirth"]),
-              lordInstance.age = getYears(match[0]["DateOfBirth"]),
-              lordInstance.party = match[0]["Party"]["#text"],
-              lordInstance.peerageType = match[0]["MemberFrom"],
-              lordInstance.beganLording = match[0]["HouseStartDate"],
-              lordInstance.beganLordingInYears =
-                  getYears(match[0]["HouseStartDate"]),
-              lordInstance.beganLordingFormatted =
-                  getDate(match[0]["HouseStartDate"]),
-              lordInstance.isActive = match[0]["CurrentStatus"]["@IsActive"],
-            }
-        });
-    print("BEFORE DELETE");
-    print(lordsFromCall.length);
-    idsToDelete
-        .forEach((id) => lordsFromCall.removeWhere((lord) => lord.id == id));
-    print("AFTER DELETE");
-    print(lordsFromCall.length);
-    print(lordsFromCall[0].dob);
+    print(lordsNamesOnly[0].displayName);
+    print(lordsNamesOnly[1].displayName);
+    // List<Lord> lordsFromCall = twoReturns[0];
+    // List lordsDeetsFromCall = twoReturns[1];
+    // List idsToDelete = [];
+    // print(lordsFromCall.length);
+    // print(lordsDeetsFromCall.length);
+    // List match;
+    // int i = 0;
+    // int j = 0;
+    // lordsFromCall.forEach((lordInstance) => {
+    //       // print('IN FOR EACH START'),
+    //       // print(lordInstance.title),
+    //       // print(lordInstance.id),
+    //       match = lordsDeetsFromCall
+    //           .where((lordMap) => lordMap["@Member_Id"] == lordInstance.id)
+    //           .toList(),
+    //       if (match.length == 0)
+    //         {i++, idsToDelete.add(lordInstance.id)}
+    //       else
+    //         {
+    //           // print(match[0]["Gender"]),
+    //           // print(match.runtimeType),
+    //           // print("in matches"),ß
+    //           // // print(match["Gender"]),
+    //           // // print(match["DateOfBirth"]),
+    //           // // print(match["Party"]["#text"]),
+    //           // // print(match["MemberFrom"]),
+    //           // // print(match["HouseStartDate"]),
+    //           // // print(match["CurrentStatus"]["@IsActive"]),
+    //           j++,
+    //           lordInstance.gender = match[0]["Gender"],
+    //           lordInstance.dob = match[0]["DateOfBirth"],
+    //           lordInstance.dobFormatted = getDate(match[0]["DateOfBirth"]),
+    //           lordInstance.age = getYears(match[0]["DateOfBirth"]),
+    //           lordInstance.party = match[0]["Party"]["#text"],
+    //           lordInstance.peerageType = match[0]["MemberFrom"],
+    //           lordInstance.beganLording = match[0]["HouseStartDate"],
+    //           lordInstance.beganLordingInYears =
+    //               getYears(match[0]["HouseStartDate"]),
+    //           lordInstance.beganLordingFormatted =
+    //               getDate(match[0]["HouseStartDate"]),
+    //           lordInstance.isActive = match[0]["CurrentStatus"]["@IsActive"],
+    //         }
+    //     });
+    // print("BEFORE DELETE");
+    // print(lordsFromCall.length);
+    // idsToDelete
+    //     .forEach((id) => lordsFromCall.removeWhere((lord) => lord.id == id));
+    // print("AFTER DELETE");
+    // print(lordsFromCall.length);
+    // print(lordsFromCall[0].dob);
 
     setState(() {
-      lords = lordsFromCall;
-      lordsUntouched = lordsFromCall;
+      lords = lordsNamesOnly;
+      lordsUntouched = lordsNamesOnly;
       gotLords = true;
     });
   }
@@ -100,12 +110,12 @@ class _LordsState extends State<LordsList> {
         lords = lordsUntouched;
       });
     } else {
-      List<Lord> forFilter = lordsUntouched;
-      List<Lord> filteredLords = lordsUntouched;
+      List<LordListedViewModel> forFilter = lordsUntouched;
+      List<LordListedViewModel> filteredLords = lordsUntouched;
 
       filteredLords = forFilter
           .where((lord) =>
-              lord.title.toLowerCase().contains(searchTerm.toLowerCase()))
+              lord.displayName.toLowerCase().contains(searchTerm.toLowerCase()))
           .toList();
 
       setState(() {
@@ -141,38 +151,38 @@ class _LordsState extends State<LordsList> {
             itemCount: lords.length,
             itemBuilder: (context, index) {
               return ExpansionTile(
-                  title: Text('${lords[index].title}'),
+                  title: Text('${lords[index].displayName}'),
                   children: <Widget>[
                     Column(
                       children: [
-                        Text('${lords[index].firstName}'),
-                        Text('${lords[index].surname}'),
-                        Text('${lords[index].gender}'),
-                        Text('dob: ${lords[index].dobFormatted}'),
-                        Text('age: ${lords[index].age}'),
-                        Text('${lords[index].party}'),
-                        Text('${lords[index].peerageType}'),
-                        Text('isActive: ${lords[index].isActive}'),
-                        Text(
-                            'started lording: ${lords[index].beganLordingFormatted}'),
-                        Text(
-                            'years lording: ${lords[index].beganLordingInYears}'),
-                        ExpansionTile(
-                            title: Text('Registered Interests'),
-                            children: <Widget>[
-                              Text("HI HI HI"),
-                              Text(
-                                  '${lords[index].interests[0].interestCategory}'),
-                              SizedBox(
-                                  height: 100,
-                                  child: ListView.builder(
-                                      scrollDirection: Axis.vertical,
-                                      itemCount: lords[index].interests.length,
-                                      itemBuilder: (BuildContext ctx, int i) {
-                                        return new Text(
-                                            '${lords[index].interests[i].interestTitle}');
-                                      }))
-                            ])
+                        Text('${lords[index].displayName}'),
+                        // Text('${lords[index].surname}'),
+                        // Text('${lords[index].gender}'),
+                        // Text('dob: ${lords[index].dobFormatted}'),
+                        // Text('age: ${lords[index].age}'),
+                        // Text('${lords[index].party}'),
+                        // Text('${lords[index].peerageType}'),
+                        // Text('isActive: ${lords[index].isActive}'),
+                        // Text(
+                        //     'started lording: ${lords[index].beganLordingFormatted}'),
+                        // Text(
+                        //     'years lording: ${lords[index].beganLordingInYears}'),
+                        // ExpansionTile(
+                        //     title: Text('Registered Interests'),
+                        //     children: <Widget>[
+                        //       Text("HI HI HI"),
+                        //       Text(
+                        //           '${lords[index].interests[0].interestCategory}'),
+                        //       SizedBox(
+                        //           height: 100,
+                        //           child: ListView.builder(
+                        //               scrollDirection: Axis.vertical,
+                        //               itemCount: lords[index].interests.length,
+                        //               itemBuilder: (BuildContext ctx, int i) {
+                        //                 return new Text(
+                        //                     '${lords[index].interests[i].interestTitle}');
+                        //               }))
+                        //     ])
                       ],
                     )
                   ]);

@@ -1,10 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'classes.dart';
-import 'utilities.dart';
 
 final String baseUrl =
     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json';
+
+final String baseLordsMemberListUrl =
+    'http://data.parliament.uk/membersdataplatform/services/mnis/members/query/house=Lords/';
 
 // Future<Response> fetchLordsLongList() async {
 //   Future<Response> result;
@@ -14,44 +16,66 @@ final String baseUrl =
 
 //   return result;
 // }
-Future<Map> getLordsExtendedFromApi() async {
-  print("IN GETLORDS FROM API");
-  http.Response returnedLordsDeets;
+Future<Map> fetchLords() async {
+  // print("IN GETLORDS FROM API");
   Map<String, dynamic> jsonReturnedLords;
-  returnedLordsDeets = await http.get(
-      'http://data.parliament.uk/membersdataplatform/services/mnis/members/query/house=Lords/',
-      headers: {"Content-Type": "application/json; charset=utf-8"});
-  print("GOT LORDS DEETS");
-  jsonReturnedLords = jsonDecode(returnedLordsDeets.body);
 
+  http.Response returnedLordsDeets = await http.get(baseLordsMemberListUrl,
+      headers: {"Content-Type": "application/json; charset=utf-8"});
+
+  jsonReturnedLords = jsonDecode(returnedLordsDeets.body);
+  // print("GOT LORDS DEETS");
+  // print(jsonReturnedLords);
   return jsonReturnedLords;
+}
+
+Future<List<dynamic>> transformLordsToList() async {
+  var extendedLordList = await fetchLords();
+  List justLords = extendedLordList["Members"]["Member"];
+  return justLords;
+}
+
+Future<List<LordListedViewModel>> transformToLordNamesList() async {
+  List lordsList = await transformLordsToList();
+  List<LordListedViewModel> newListofLordTitles = [];
+
+  lordsList.forEach((lord) {
+    var isActive = lord["CurrentStatus"]["@IsActive"].toLowerCase();
+    if (isActive == "true") {
+      LordListedViewModel newLordListedItem = new LordListedViewModel();
+      newLordListedItem.displayName = lord["DisplayAs"];
+      newListofLordTitles.add(newLordListedItem);
+    }
+  });
+  
+  return newListofLordTitles;
 }
 
 Future<List> fetchLordsExtended() async {
   print("in fetchlords extended");
   var extendedLordList;
   List justLords;
-  extendedLordList = await getLordsExtendedFromApi();
+  extendedLordList = await fetchLords();
   print("BACK IN FETCH LORDS");
   justLords = extendedLordList["Members"]["Member"];
   return justLords;
 }
 
-Future<List<Lord>> fetchLords() async {
-  List<Lord> listOfLords;
-  /*
-  Commented out for development
-  num numberOfPages = await getPageNumbers(baseUrl, 500);
-  List<Map<String, dynamic>> lordsResults = await getLordsFromApi(numberOfPages);
-*/
-  num numberOfPages = await getPageNumbers(baseUrl, 500);
-  List<Map<String, dynamic>> lordsResults =
-      await getLordsFromApi(numberOfPages);
-  // List<Map<String, dynamic>> lordsResults = await getLordsFromApi(1);
-  listOfLords = convertToClass(lordsResults);
+// Future<List<Lord>> fetchLords_OLD() async {
+//   List<Lord> listOfLords;
+//   /*
+//   Commented out for development
+//   num numberOfPages = await getPageNumbers(baseUrl, 500);
+//   List<Map<String, dynamic>> lordsResults = await getLordsFromApi(numberOfPages);
+// */
+//   num numberOfPages = await getPageNumbers(baseUrl, 500);
+//   List<Map<String, dynamic>> lordsResults =
+//       await getLordsFromApi(numberOfPages);
+//   // List<Map<String, dynamic>> lordsResults = await getLordsFromApi(1);
+//   listOfLords = convertToClass(lordsResults);
 
-  return listOfLords;
-}
+//   return listOfLords;
+// }
 
 Future<int> getPageNumbers(String url, int resultsPerPage) async {
   var response = await http.get(url);
