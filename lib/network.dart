@@ -43,6 +43,7 @@ Future<List<LordListedViewModel>> transformToLordNamesList() async {
     var isActive = lord["CurrentStatus"]["@IsActive"].toLowerCase();
     if (isActive == "true") {
       LordListedViewModel newLordListedItem = new LordListedViewModel();
+      newLordListedItem.memberId = int.parse(lord["@Member_Id"]);
       newLordListedItem.displayName = lord["DisplayAs"];
       newListofLordTitles.add(newLordListedItem);
     }

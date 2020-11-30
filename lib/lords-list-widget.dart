@@ -32,6 +32,11 @@ class _LordsState extends State<LordsList> {
   //   // return [lordsFromCall, lordsDeetsFromCall];
   // }
 
+  Future<String> getLordInfo(int memberId) async {
+    // List<LordListedViewModel> newLordsList = await transformToLordNamesList();
+    return memberId as Future;
+  }
+
   Future<List<LordListedViewModel>> getLordsNamesOnly() async {
     List<LordListedViewModel> newLordsList = await transformToLordNamesList();
     return newLordsList;
@@ -42,8 +47,6 @@ class _LordsState extends State<LordsList> {
     // List<List> twoReturns = await getLords2();
     List<LordListedViewModel> lordsNamesOnly = await getLordsNamesOnly();
     print("GOT LORDS");
-    print(lordsNamesOnly[0].displayName);
-    print(lordsNamesOnly[1].displayName);
     // List<Lord> lordsFromCall = twoReturns[0];
     // List lordsDeetsFromCall = twoReturns[1];
     // List idsToDelete = [];
@@ -144,17 +147,23 @@ class _LordsState extends State<LordsList> {
   Widget build(BuildContext context) {
     print("in WIDGET");
     print(widget.searchText);
-    filterLords(widget.searchText);
+    filterLords(widget.searchText); 
+
+    void testSomething(int index) {
+      print(index);
+    }
 
     return gotLords
         ? ListView.builder(
             itemCount: lords.length,
             itemBuilder: (context, index) {
               return ExpansionTile(
+                //  onExpansionChanged: this.getLordInfo(index),
                   title: Text('${lords[index].displayName}'),
                   children: <Widget>[
                     Column(
                       children: [
+                        Text('${lords[index].memberId}'),
                         Text('${lords[index].displayName}'),
                         // Text('${lords[index].surname}'),
                         // Text('${lords[index].gender}'),

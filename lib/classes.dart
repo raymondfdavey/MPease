@@ -22,6 +22,7 @@ class LordBaseList {
 }
 
 class LordListedViewModel {
+  int memberId;
   String displayName;
   // bool isActive;
 }
