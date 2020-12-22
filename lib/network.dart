@@ -2,30 +2,19 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'classes.dart';
 
-final String baseUrl =
+final String baseUrlInterests =
     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json';
 
-final String baseLordsMemberListUrl =
+final String baseUrlLords =
     'http://data.parliament.uk/membersdataplatform/services/mnis/members/query/house=Lords/';
 
-// Future<Response> fetchLordsLongList() async {
-//   Future<Response> result;
-
-//   result = await http.get(
-//       'http://data.parliament.uk/membersdataplatform/services/mnis/members/query/house=Lords/');
-
-//   return result;
-// }
 Future<Map> fetchLords() async {
-  // print("IN GETLORDS FROM API");
   Map<String, dynamic> jsonReturnedLords;
 
-  http.Response returnedLordsDeets = await http.get(baseLordsMemberListUrl,
+  http.Response returnedLordsDeets = await http.get(baseUrlLords,
       headers: {"Content-Type": "application/json; charset=utf-8"});
 
   jsonReturnedLords = jsonDecode(returnedLordsDeets.body);
-  // print("GOT LORDS DEETS");
-  // print(jsonReturnedLords);
   return jsonReturnedLords;
 }
 
@@ -35,20 +24,25 @@ Future<List<dynamic>> transformLordsToList() async {
   return justLords;
 }
 
-Future<List<LordListedViewModel>> transformToLordNamesList() async {
+Future<List<Lord>> transformToLordNamesList() async {
   List lordsList = await transformLordsToList();
-  List<LordListedViewModel> newListofLordTitles = [];
+  List<Lord> newListofLordTitles = [];
+  List<Interest> listOfInterests = [];
 
   lordsList.forEach((lord) {
     var isActive = lord["CurrentStatus"]["@IsActive"].toLowerCase();
     if (isActive == "true") {
-      LordListedViewModel newLordListedItem = new LordListedViewModel();
+      Lord newLordListedItem = new Lord();
       newLordListedItem.memberId = int.parse(lord["@Member_Id"]);
       newLordListedItem.displayName = lord["DisplayAs"];
+      newLordListedItem.memberFrom = lord["MemberFrom"];
+      newLordListedItem.party = lord["Party"]["#text"];
+      newLordListedItem.dob = DateTime.parse(lord["DateOfBirth"]);
+      newLordListedItem.interests = listOfInterests;
       newListofLordTitles.add(newLordListedItem);
     }
   });
-  
+
   return newListofLordTitles;
 }
 
@@ -95,8 +89,6 @@ Future<List<Map<String, dynamic>>> getLordsFromApi(int pages) async {
   Map<String, dynamic> results = {};
   for (int i = 0; i <= pages - 1; i++) {
     String resultsKey = 'page $i';
-    // results[resultsKey] = await http.get(
-    //     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
     results[resultsKey] = await http.get(
         'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
     print('done page $i');
