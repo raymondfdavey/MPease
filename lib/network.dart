@@ -1,89 +1,57 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'classes.dart';
-import 'utilities.dart';
 
-final String baseUrl =
+final String baseUrlInterests =
     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json';
+final String baseUrlLords =
+    'http://data.parliament.uk/membersdataplatform/services/mnis/members/query/house=Lords/';
+final String baseUrlMembersAPI = 'https://members-api.parliament.uk/api/';
 
-// Future<Response> fetchLordsLongList() async {
-//   Future<Response> result;
+String getUrlLordInfoById(int memberId) {
+  return baseUrlMembersAPI + 'Members/' + memberId.toString();
+}
 
-//   result = await http.get(
-//       'http://data.parliament.uk/membersdataplatform/services/mnis/members/query/house=Lords/');
+String getUrlLordInterestById(int memberId) {
+  return baseUrlMembersAPI +
+      'Members/' +
+      memberId.toString() +
+      '/RegisteredInterests';
+}
 
-//   return result;
-// }
-Future<Map> getLordsExtendedFromApi() async {
-  print("IN GETLORDS FROM API");
-  http.Response returnedLordsDeets;
+Future<Map> fetchLordsFromAPI() async {
   Map<String, dynamic> jsonReturnedLords;
-  returnedLordsDeets = await http.get(
-      'http://data.parliament.uk/membersdataplatform/services/mnis/members/query/house=Lords/',
-      headers: {"Content-Type": "application/json; charset=utf-8"});
-  print("GOT LORDS DEETS");
-  jsonReturnedLords = jsonDecode(returnedLordsDeets.body);
 
+  http.Response returnedLordsDeets = await http.get(baseUrlLords,
+      headers: {"Content-Type": "application/json; charset=utf-8"});
+
+  jsonReturnedLords = jsonDecode(returnedLordsDeets.body);
   return jsonReturnedLords;
 }
 
-Future<List> fetchLordsExtended() async {
-  print("in fetchlords extended");
-  var extendedLordList;
-  List justLords;
-  extendedLordList = await getLordsExtendedFromApi();
-  print("BACK IN FETCH LORDS");
-  justLords = extendedLordList["Members"]["Member"];
-  return justLords;
+bool isLordActive(dynamic lord) {
+  var isActive = lord["CurrentStatus"]["@IsActive"].toLowerCase();
+  return isActive == "true";
 }
 
-Future<List<Lord>> fetchLords() async {
-  List<Lord> listOfLords;
-  /*
-  Commented out for development
-  num numberOfPages = await getPageNumbers(baseUrl, 500);
-  List<Map<String, dynamic>> lordsResults = await getLordsFromApi(numberOfPages);
-*/
-  num numberOfPages = await getPageNumbers(baseUrl, 500);
-  List<Map<String, dynamic>> lordsResults =
-      await getLordsFromApi(numberOfPages);
-  // List<Map<String, dynamic>> lordsResults = await getLordsFromApi(1);
-  listOfLords = convertToClass(lordsResults);
+Future<List<Lord>> transformLordsToList() async {
+  var extendedLordList = await fetchLordsFromAPI();
+  List lordsList = extendedLordList["Members"]["Member"];
+  List<Lord> newListofLordTitles = [];
+  List<Interest> listOfInterests = [];
 
-  return listOfLords;
-}
-
-Future<int> getPageNumbers(String url, int resultsPerPage) async {
-  var response = await http.get(url);
-  num numberOfPages;
-  if (response.statusCode == 200) {
-    var summary = jsonDecode(response.body);
-    numberOfPages = (summary['result']['totalResults'] / resultsPerPage).ceil();
-  } else {
-    throw Exception('failed to load summary');
-  }
-
-  return numberOfPages;
-}
-
-Future<List<Map<String, dynamic>>> getLordsFromApi(int pages) async {
-  Map<String, dynamic> results = {};
-  for (int i = 0; i <= pages - 1; i++) {
-    String resultsKey = 'page $i';
-    // results[resultsKey] = await http.get(
-    //     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
-    results[resultsKey] = await http.get(
-        'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
-    print('done page $i');
-    if (results[resultsKey].statusCode == 200) {
-      continue;
-    } else {
-      throw Exception('Failed to load lords');
+  lordsList.forEach((lord) {
+    if (isLordActive(lord)) {
+      Lord newLordListedItem = new Lord();
+      newLordListedItem.memberId = int.parse(lord["@Member_Id"]);
+      newLordListedItem.displayName = lord["DisplayAs"];
+      newLordListedItem.memberFrom = lord["MemberFrom"];
+      newLordListedItem.party = lord["Party"]["#text"];
+      newLordListedItem.dob = DateTime.parse(lord["DateOfBirth"]);
+      newLordListedItem.interests = listOfInterests;
+      
+      newListofLordTitles.add(newLordListedItem);
     }
-  }
-  List<Map<String, dynamic>> lordObjects = [];
-  results.forEach((k, v) => results[k] = jsonDecode(v.body));
-  results.forEach((k, v) =>
-      results[k]['result']['items'].forEach((lord) => lordObjects.add(lord)));
-  return lordObjects;
+  });
+  return newListofLordTitles;
 }

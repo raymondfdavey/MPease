@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Icon cusIcon = Icon(Icons.search);
 
-  Widget cusSearchBar = Text("FUCKLORDS");
+  Widget cusSearchBar = Text("F LORDS");
   FocusNode myFocusNode;
   String searchText = "initial text";
 
