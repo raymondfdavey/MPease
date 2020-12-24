@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 
 final List<int> colorCodes = <int>[600, 500, 100];
 
-// try and impliment expansion tile whereby each lord is an expandable tile where the lords title is the title of the tile, then when you click it reveals some more details invluding an expandable interests tile where the title is registered interests and a number
 class LordsList extends StatefulWidget {
   final String searchText;
   LordsList({Key key, this.searchText}) : super(key: key);
@@ -17,27 +16,8 @@ class _LordsState extends State<LordsList> {
   List<Lord> lords;
   List<Lord> lordsUntouched;
   List<Interest> interests;
-  // List<Lord> lords;
-  // List<Lord> lordsUntouched;
   bool gotLords = false;
-  // List<Map> detailsLords;
   Future someFuture;
-
-  // Future<List<List>> getLords2() async {
-  //   print("GETTING LORDS");
-  //   // List<Lord> lordsFromCall = [];
-  //   // List<Lord> lordsFromCall = await fetchLords_OLD();
-  //   List lordsDeetsFromCall = await fetchLordsExtended();
-
-  //   // print(lordsFromCall.length);
-  //   print(lordsDeetsFromCall.length);
-  //   // return [lordsFromCall, lordsDeetsFromCall];
-  // }
-
-  Future<String> getLordInfo(int memberId) async {
-    // List<LordListedViewModel> newLordsList = await transformToLordNamesList();
-    return memberId as Future;
-  }
 
   String getInterests(int memberId) {
     print("getInterests()");
@@ -45,7 +25,7 @@ class _LordsState extends State<LordsList> {
   }
 
   Future<List<Lord>> getLordsNamesOnly() async {
-    List<Lord> newLordsList = await transformToLordNamesList();
+    List<Lord> newLordsList = await transformLordsToList();
     return newLordsList;
   }
 
@@ -82,16 +62,6 @@ class _LordsState extends State<LordsList> {
     }
   }
 
-  //   /*
-  // Future.wait([fetchLords()])
-  //       .then((List<List<Lord>> results) => copyOfLords = results[0]);
-  //   */
-  //   print("In filter lords" + searchTerm);
-  //   // List<Lord> filteredLords =
-  //   //     lordList.where((lord) => lord.surname.contains(searchTerm)).toList();
-  //   // print(filteredLords.length);
-  //   // return filteredLords;
-  // }
   @override
   void initState() {
     super.initState();
@@ -100,8 +70,6 @@ class _LordsState extends State<LordsList> {
 
   @override
   Widget build(BuildContext context) {
-    // print("in WIDGET");
-    // print(widget.searchText);
     filterLords(widget.searchText);
 
     return gotLords
