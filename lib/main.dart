@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: goToSavedToggle,
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.favorite),
           ),
           actions: <Widget>[
             IconButton(

@@ -11,8 +11,10 @@ class LordsList extends StatefulWidget {
   final bool saved;
   final String searchText;
   final savedToggle;
+
   LordsList({Key key, this.searchText, this.saved, this.savedToggle})
       : super(key: key);
+
   @override
   _LordsState createState() => _LordsState();
 }
@@ -154,12 +156,17 @@ class _LordsState extends State<LordsList> {
 
   @override
   Widget build(BuildContext context) {
+    // ValueChanged<bool> onExpansionChanged;
     print("in WIDGET");
     print(widget.searchText);
     filterLords(widget.searchText);
+
     if (widget.saved == true) {
+      print("STARTING NEW PAGE");
+
       pushSavedLords();
     }
+    print("BACK TO OLD PAGE");
 
     return gotLords
         ? ListView.builder(
@@ -167,6 +174,8 @@ class _LordsState extends State<LordsList> {
             itemBuilder: (context, index) {
               final alreadySaved = faveLords.contains(lords[index]);
               return ExpansionTile(
+                  onExpansionChanged: (onExpansionChanged) =>
+                      print(onExpansionChanged),
                   title: Text('${lords[index].title}'),
                   leading: IconButton(
                       icon: alreadySaved
@@ -185,24 +194,31 @@ class _LordsState extends State<LordsList> {
                   children: <Widget>[
                     Column(
                       children: [
-                        Text('${lords[index].firstName}'),
-                        Text('${lords[index].surname}'),
-                        Text('${lords[index].gender}'),
-                        Text('dob: ${lords[index].dobFormatted}'),
-                        Text('age: ${lords[index].age}'),
-                        Text('${lords[index].party}'),
-                        Text('${lords[index].peerageType}'),
-                        Text('isActive: ${lords[index].isActive}'),
-                        Text(
-                            'started lording: ${lords[index].beganLordingFormatted}'),
-                        Text(
-                            'years lording: ${lords[index].beganLordingInYears}'),
+                        // row with children hi there and then column
+                        Row(children: <Widget>[
+                          Column(children: <Widget>[
+                            Text("I WISH I WAS A PICTURE"),
+                            TextButton(
+                                onPressed: null, child: Text("GIMME A HAT"))
+                          ]),
+                          Column(children: <Widget>[
+                            Text('${lords[index].firstName}'),
+                            Text('${lords[index].surname}'),
+                            Text('${lords[index].gender}'),
+                            Text('dob: ${lords[index].dobFormatted}'),
+                            Text('age: ${lords[index].age}'),
+                            Text('${lords[index].party}'),
+                            Text('${lords[index].peerageType}'),
+                            Text('isActive: ${lords[index].isActive}'),
+                            Text(
+                                'started: ${lords[index].beganLordingFormatted}'),
+                            Text(
+                                'years lording: ${lords[index].beganLordingInYears}'),
+                          ])
+                        ]),
                         ExpansionTile(
                             title: Text('Registered Interests'),
                             children: <Widget>[
-                              Text("HI HI HI"),
-                              Text(
-                                  '${lords[index].interests[0].interestCategory}'),
                               SizedBox(
                                   height: 100,
                                   child: ListView.builder(

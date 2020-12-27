@@ -70,10 +70,10 @@ Future<List<Map<String, dynamic>>> getLordsFromApi(int pages) async {
   Map<String, dynamic> results = {};
   for (int i = 0; i <= pages - 1; i++) {
     String resultsKey = 'page $i';
+    results[resultsKey] = await http.get(
+        'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=5');
     // results[resultsKey] = await http.get(
     //     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
-    results[resultsKey] = await http.get(
-        'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json?_pageSize=500&_page=$i');
     print('done page $i');
     if (results[resultsKey].statusCode == 200) {
       continue;
