@@ -1,3 +1,4 @@
+import 'package:MPease/lords-expansion-1.dart';
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
@@ -20,7 +21,6 @@ class _LordsState extends State<LordsList> {
   Future someFuture;
 
   String getInterests(int memberId) {
-    print("getInterests()");
     return "hi";
   }
 
@@ -76,23 +76,7 @@ class _LordsState extends State<LordsList> {
         ? ListView.builder(
             itemCount: lords.length,
             itemBuilder: (context, index) {
-                return ExpansionTile(
-                  title: Text('${lords[index].displayName}'),
-                  children: <Widget>[
-                    Column(
-                      children: [
-                        // Text('${lords[index].memberId}'),
-                        Text('${lords[index].displayName}'),
-                        Text('Started Lording: ${lords[index].memberFrom}'),
-                        Text('Party: ${lords[index].party}'),
-                        Text('Born: ' +
-                            DateFormat('yyyy-MM-dd').format(lords[index].dob)),
-                        Text(lords.isEmpty
-                            ? '${lords[index]?.interests[index]?.interestTitle}'
-                            : this.getInterests(1))
-                      ],
-                    )
-                  ]);
+              return LordsExpansion1(lord: lords[index]);
             })
         : CircularProgressIndicator();
   }
