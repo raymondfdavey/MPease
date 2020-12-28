@@ -38,7 +38,6 @@ String getUrlLordInterestById(int memberId) {
 
 Future<List> getRegisteredInterests(String url) async {
   http.Response callForInterests = await http.get(url);
-  print(callForInterests.statusCode);
   if (callForInterests.statusCode != 200) return [];
   Map<String, dynamic> jsonReturnedInterests =
       jsonDecode(callForInterests.body);
@@ -67,7 +66,6 @@ List<Interest> convertToInterestList(List interestsJson) {
       interests.add(newOne);
     }
   }
-  print(interests);
   return interests;
 }
 

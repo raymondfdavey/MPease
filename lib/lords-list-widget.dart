@@ -21,7 +21,6 @@ class _LordsState extends State<LordsList> {
   Future someFuture;
 
   String getInterests(int memberId) {
-    print("getInterests()");
     return "hi";
   }
 
@@ -77,7 +76,6 @@ class _LordsState extends State<LordsList> {
         ? ListView.builder(
             itemCount: lords.length,
             itemBuilder: (context, index) {
-              print(lords[index]);
               return LordsExpansion1(lord: lords[index]);
             })
         : CircularProgressIndicator();
