@@ -37,7 +37,8 @@ String getUrlLordInterestById(int memberId) {
 }
 
 Future<List> getRegisteredInterests(String url) async {
-  http.Response callForInterests = await http.get(url);
+  http.Response callForInterests = await http
+      .get(url, headers: {"Content-Type": "application/json; charset=utf-8"});
   if (callForInterests.statusCode != 200) return [];
   Map<String, dynamic> jsonReturnedInterests =
       jsonDecode(callForInterests.body);
@@ -70,7 +71,8 @@ List<Interest> convertToInterestList(List interestsJson) {
 }
 
 Future<bool> attemptPictureUrl(String url) async {
-  http.Response callToUrl = await http.get(url);
+  http.Response callToUrl = await http
+      .get(url, headers: {"Content-Type": "application/json; charset=utf-8"});
 
   if (callToUrl.statusCode == 200)
     return true;

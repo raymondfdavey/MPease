@@ -1,22 +1,36 @@
-import 'package:MPease/lords-expansion-1.dart';
 import 'package:MPease/lords-expansion-2.dart';
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
 import 'package:intl/intl.dart';
 
-class LordsExpansion1 extends StatefulWidget {
+class LordTile extends StatefulWidget {
   final Lord lord;
-  LordsExpansion1({Key key, this.lord}) : super(key: key);
+  final addToFavourites;
+  final removeFromFavourites;
+  final bool isFavouriteList;
+  LordTile(
+      {Key key,
+      this.lord,
+      this.addToFavourites,
+      this.removeFromFavourites,
+      this.isFavouriteList = false})
+      : super(key: key);
   @override
-  _LordsExpansion1State createState() => _LordsExpansion1State(lord);
+  _LordTileState createState() => _LordTileState(
+      lord, addToFavourites, removeFromFavourites, isFavouriteList);
 }
 
-class _LordsExpansion1State extends State<LordsExpansion1> {
+class _LordTileState extends State<LordTile> {
   Lord lord;
-  _LordsExpansion1State(this.lord);
+  Function addToFavourites;
+  Function removeFromFavourites;
+  bool isFavouriteList;
+  _LordTileState(this.lord, this.addToFavourites, this.removeFromFavourites,
+      this.isFavouriteList);
   bool fetchingUrl = true;
   bool urlError = false;
+  bool isFavourite = false;
 
   void testImageUrl(String url) async {
     bool answer = await attemptPictureUrl(url);
@@ -33,13 +47,45 @@ class _LordsExpansion1State extends State<LordsExpansion1> {
     }
   }
 
+  void isFavouriteLordToggle() {
+    print("TOGGLING FAVOURITE IN");
+    print(lord);
+    if (isFavourite) {
+      setState(() {
+        isFavourite = false;
+      });
+    } else {
+      setState(() {
+        isFavourite = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-        onExpansionChanged: (onExpansionChanged) =>
-            {testImageUrl(lord.pictureUrl)},
-        title: Text('${lord.displayName}'),
-        children: <Widget>[
+    return Container(
+        child: ExpansionTile(
+            onExpansionChanged: (onExpansionChanged) =>
+                {testImageUrl(lord.pictureUrl)},
+            title: Text('${lord.displayName}'),
+            leading: !isFavouriteList
+                ? IconButton(
+                    onPressed: () {
+                      print("HI BUTTON PRESSED");
+                      if (!isFavourite) {
+                        addToFavourites(this.lord);
+                      } else {
+                        removeFromFavourites(this.lord);
+                      }
+                      isFavouriteLordToggle();
+                    },
+                    icon: isFavourite
+                        ? Icon(Icons.favorite)
+                        : Icon(Icons.favorite_border),
+                    color: isFavourite ? Colors.red : null,
+                  )
+                : Container(),
+            children: <Widget>[
           Column(
             children: [
               Row(children: <Widget>[
@@ -85,6 +131,6 @@ class _LordsExpansion1State extends State<LordsExpansion1> {
             ],
           ),
           Expansion2(id: lord.memberId)
-        ]);
+        ]));
   }
 }
