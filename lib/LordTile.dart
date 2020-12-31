@@ -115,6 +115,11 @@ class _LordTileState extends State<LordTile> {
                       : !fetchingUrl && urlError
                           ? Text("NO IMAGE SOZ")
                           : CircularProgressIndicator(),
+                  TextButton(
+                      onPressed: () {
+                        print("IN GET ME MORE DETAILS");
+                      },
+                      child: Text("MORE DETAILS")),
                 ]),
                 Column(children: <Widget>[
                   Text('${lord.memberId}'),
