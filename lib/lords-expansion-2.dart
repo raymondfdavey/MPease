@@ -1,8 +1,6 @@
-import 'package:MPease/lords-expansion-1.dart';
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
-import 'package:intl/intl.dart';
 
 class Expansion2 extends StatefulWidget {
   final int id;

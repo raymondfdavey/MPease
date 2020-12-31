@@ -1,28 +1,35 @@
-import 'package:MPease/lords-expansion-1.dart';
+import 'package:MPease/LordTile.dart';
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
-import 'package:intl/intl.dart';
 
 final List<int> colorCodes = <int>[600, 500, 100];
 
 class LordsList extends StatefulWidget {
   final String searchText;
-  LordsList({Key key, this.searchText}) : super(key: key);
+  final addToFavourites;
+  final removeFromFavourites;
+  LordsList(
+      {Key key,
+      this.searchText,
+      this.addToFavourites,
+      this.removeFromFavourites})
+      : super(key: key);
   @override
-  _LordsState createState() => _LordsState();
+  _LordsState createState() =>
+      _LordsState(addToFavourites, removeFromFavourites, searchText);
 }
 
 class _LordsState extends State<LordsList> {
+  final String searchText;
   List<Lord> lords;
   List<Lord> lordsUntouched;
+  Function addToFavourites;
+  Function removeFromFavourites;
   List<Interest> interests;
   bool gotLords = false;
   Future someFuture;
-
-  String getInterests(int memberId) {
-    return "hi";
-  }
+  _LordsState(this.addToFavourites, this.removeFromFavourites, this.searchText);
 
   Future<List<Lord>> getLordsNamesOnly() async {
     List<Lord> newLordsList = await transformLordsToList();
@@ -71,12 +78,15 @@ class _LordsState extends State<LordsList> {
   @override
   Widget build(BuildContext context) {
     filterLords(widget.searchText);
-
     return gotLords
         ? ListView.builder(
             itemCount: lords.length,
             itemBuilder: (context, index) {
-              return LordsExpansion1(lord: lords[index]);
+              return LordTile(
+                lord: lords[index],
+                addToFavourites: addToFavourites,
+                removeFromFavourites: removeFromFavourites,
+              );
             })
         : CircularProgressIndicator();
   }
