@@ -84,7 +84,7 @@ class _LordTileState extends State<LordTile> {
                         : Icon(Icons.favorite_border),
                     color: isFavourite ? Colors.red : null,
                   )
-                : Container(),
+                : null,
             children: <Widget>[
           Column(
             children: [

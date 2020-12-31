@@ -111,11 +111,13 @@ class _MyAppState extends State<MyApp> {
                                   ),
                                   home: Scaffold(
                                       appBar: AppBar(
-                                          leading: IconButton(
-                                              icon: Icon(Icons.cancel),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              })),
+                                        leading: IconButton(
+                                            icon: Icon(Icons.cancel),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            }),
+                                        title: Text("Favourite Lords"),
+                                      ),
                                       body: FavouritesScreen(
                                           favouriteLords: favouriteLordsList)));
                               // body: Text("HI")));

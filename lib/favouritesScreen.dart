@@ -12,6 +12,13 @@ class FavouritesScreen extends StatelessWidget {
     print(favouriteLords.runtimeType);
     favouriteLords.forEach((lord) => {print(lord.displayName)});
 
-    return Text("HI");
+    return ListView.builder(
+        itemCount: favouriteLords.length,
+        itemBuilder: (context, index) {
+          return LordTile(
+            lord: favouriteLords[index],
+            isFavouriteList: true,
+          );
+        });
   }
 }
