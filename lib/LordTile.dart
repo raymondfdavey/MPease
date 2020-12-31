@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
 import 'package:intl/intl.dart';
+import "lordDetailsScreen.dart";
 
 class LordTile extends StatefulWidget {
   final Lord lord;
@@ -59,6 +60,29 @@ class _LordTileState extends State<LordTile> {
         isFavourite = true;
       });
     }
+  }
+
+  void navigateToDetailsScreen(context, lord) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+                icon: Icon(Icons.cancel),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            title: Text('${lord.displayName}'),
+          ),
+          body: LordsDetailsScreen(lord),
+        ),
+      );
+      // body: Text("HI")));
+    }));
   }
 
   @override
@@ -118,6 +142,7 @@ class _LordTileState extends State<LordTile> {
                   TextButton(
                       onPressed: () {
                         print("IN GET ME MORE DETAILS");
+                        navigateToDetailsScreen(context, lord);
                       },
                       child: Text("MORE DETAILS")),
                 ]),
