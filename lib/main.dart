@@ -32,6 +32,27 @@ class _MyAppState extends State<MyApp> {
     print(favouriteLordsList);
   }
 
+  void navigateToFavourites(context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                title: Text("Favourite Lords"),
+              ),
+              body: FavouritesScreen(favouriteLords: favouriteLordsList)));
+      // body: Text("HI")));
+    }));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -102,26 +123,7 @@ class _MyAppState extends State<MyApp> {
                       actions: <Widget>[
                         IconButton(
                           onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return MaterialApp(
-                                  debugShowCheckedModeBanner: false,
-                                  theme: ThemeData(
-                                    primarySwatch: Colors.blue,
-                                  ),
-                                  home: Scaffold(
-                                      appBar: AppBar(
-                                        leading: IconButton(
-                                            icon: Icon(Icons.cancel),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            }),
-                                        title: Text("Favourite Lords"),
-                                      ),
-                                      body: FavouritesScreen(
-                                          favouriteLords: favouriteLordsList)));
-                              // body: Text("HI")));
-                            }));
+                            navigateToFavourites(context);
                           },
                           icon: Icon(Icons.favorite),
                         ),
