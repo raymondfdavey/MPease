@@ -68,6 +68,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Builder(
             builder: (context) => MaterialApp(
                   debugShowCheckedModeBanner: false,
@@ -127,12 +128,24 @@ class _MyAppState extends State<MyApp> {
                           },
                           icon: Icon(Icons.favorite),
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.menu),
-                        ),
-                        // IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
-                        // IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
+                        PopupMenuButton<String>(
+                          color: Colors.blue,
+                          onSelected: handleClick,
+                          itemBuilder: (BuildContext context) {
+                            return {
+                              'All Lords',
+                              'Filter By...',
+                              'Visuals',
+                              'About',
+                            }.map((String choice) {
+                              return PopupMenuItem<String>(
+                                value: choice,
+                                child: Text(choice,
+                                    style: TextStyle(color: Colors.white)),
+                              );
+                            }).toList();
+                          },
+                        )
                       ],
                       titleSpacing: (40.0),
                       elevation: 30.0,
@@ -148,5 +161,9 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ),
                 )));
+  }
+
+  void handleClick(String value) {
+    print(value);
   }
 }

@@ -71,8 +71,7 @@ List<Interest> convertToInterestList(List interestsJson) {
 }
 
 Future<bool> attemptPictureUrl(String url) async {
-  http.Response callToUrl = await http
-      .get(url, headers: {"Content-Type": "application/json; charset=utf-8"});
+  http.Response callToUrl = await http.get(url);
 
   if (callToUrl.statusCode == 200)
     return true;
@@ -116,7 +115,7 @@ Future<List<Lord>> transformLordsToList() async {
       newLordListedItem.pictureUrl =
           'https://members-api.parliament.uk/api/Members/' +
               '$memberId' +
-              '/Portrait?cropType=oneone';
+              '/Thumbnail';
       newListofLordTitles.add(newLordListedItem);
     }
   });
