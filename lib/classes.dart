@@ -15,3 +15,9 @@ class Interest {
   String interestCategory;
   String started;
 }
+
+class Question {}
+
+class Vote {}
+
+class Focus {}
