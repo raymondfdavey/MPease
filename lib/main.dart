@@ -22,13 +22,17 @@ class _MyAppState extends State<MyApp> {
 
   void addToFavourites(lord) {
     print("ADDING TO FAVOURITES BIATCH");
-    favouriteLordsList.add(lord);
+    setState(() {
+      favouriteLordsList.add(lord);
+    });
     print(favouriteLordsList);
   }
 
   void removeFromFavourites(lord) {
     print("REMOVING FROM FAVOURITES DUDE");
-    favouriteLordsList.remove(lord);
+    setState(() {
+      favouriteLordsList.remove(lord);
+    });
     print(favouriteLordsList);
   }
 
@@ -51,6 +55,10 @@ class _MyAppState extends State<MyApp> {
               body: FavouritesScreen(favouriteLords: favouriteLordsList)));
       // body: Text("HI")));
     }));
+  }
+
+  void handleMenuClick(String value) {
+    print(value);
   }
 
   @override
@@ -129,8 +137,10 @@ class _MyAppState extends State<MyApp> {
                           icon: Icon(Icons.favorite),
                         ),
                         PopupMenuButton<String>(
+                          tooltip: "hiya! thanks for using our app",
+                          elevation: 5,
                           color: Colors.blue,
-                          onSelected: handleClick,
+                          onSelected: handleMenuClick,
                           itemBuilder: (BuildContext context) {
                             return {
                               'All Lords',
@@ -161,9 +171,5 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ),
                 )));
-  }
-
-  void handleClick(String value) {
-    print(value);
   }
 }
