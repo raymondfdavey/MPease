@@ -2,6 +2,8 @@ import 'package:MPease/favouritesScreen.dart';
 import 'package:flutter/material.dart';
 import 'lords-list-widget.dart';
 import "classes.dart";
+import "aboutPage.dart";
+import "visualsPage.dart";
 
 void main() {
   runApp(MyApp());
@@ -35,27 +37,6 @@ class _MyAppState extends State<MyApp> {
       favouriteLordsList.remove(lord);
     });
     print(favouriteLordsList);
-  }
-
-  void navigateToFavourites(context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          home: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                    icon: Icon(Icons.cancel),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-                title: Text("Favourite Lords"),
-              ),
-              body: FavouritesScreen(favouriteLords: favouriteLordsList)));
-      // body: Text("HI")));
-    }));
   }
 
   Map filterTerms = {'age': "AGE", 'party': "PARTY", 'type': "TYPE"};
@@ -138,7 +119,9 @@ class _MyAppState extends State<MyApp> {
                           tooltip: "hiya! thanks for using our app",
                           elevation: 5,
                           color: Colors.blue,
-                          onSelected: handleMenuClick,
+                          onSelected: (choice) {
+                            handleMenuClick(choice, context);
+                          },
                           itemBuilder: (BuildContext context) {
                             return {
                               'All Lords',
@@ -147,10 +130,9 @@ class _MyAppState extends State<MyApp> {
                               'About',
                             }.map((String choice) {
                               return PopupMenuItem<String>(
-                                value: choice,
-                                child: Text(choice,
-                                    style: TextStyle(color: Colors.white)),
-                              );
+                                  value: choice,
+                                  child: Text(choice,
+                                      style: TextStyle(color: Colors.white)));
                             }).toList();
                           },
                         )
@@ -275,7 +257,73 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void handleMenuClick(String value) {
+  void navigateToFavourites(context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                title: Text("Favourite Lords"),
+              ),
+              body: FavouritesScreen(favouriteLords: favouriteLordsList)));
+      // body: Text("HI")));
+    }));
+  }
+
+  void navigateToAbout(context) {
+    print("in about");
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                  icon: Icon(Icons.cancel),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              title: Text("Favourite Lords"),
+            ),
+            body: AboutPage(),
+          ));
+      // body: Text("HI")));
+    }));
+  }
+
+  void navigateToVisuals(context) {
+    print("in visuals");
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                title: Text("Favourite Lords"),
+              ),
+              body: VisualsPage()));
+      // body: Text("HI")));
+    }));
+  }
+
+  void handleMenuClick(String value, BuildContext context) {
     if (value == 'Filter') {
       print("IN FILTER: $filterOn");
       setState(() {
@@ -289,8 +337,12 @@ class _MyAppState extends State<MyApp> {
         filterOn = false;
       });
       print("IN ALL LORDS $filterOn");
-    } else {
-      print("SUMMIT ELSE");
+    }
+    if (value == "About") {
+      navigateToAbout(context);
+    }
+    if (value == "Visuals") {
+      navigateToVisuals(context);
     }
   }
 }
