@@ -6,30 +6,37 @@ import 'classes.dart';
 final List<int> colorCodes = <int>[600, 500, 100];
 
 class LordsList extends StatefulWidget {
+  final Map filterTerms;
   final String searchText;
   final addToFavourites;
   final removeFromFavourites;
+  final bool filterOn;
   LordsList(
       {Key key,
+      this.filterTerms,
+      this.filterOn,
       this.searchText,
       this.addToFavourites,
       this.removeFromFavourites})
       : super(key: key);
   @override
-  _LordsState createState() =>
-      _LordsState(addToFavourites, removeFromFavourites, searchText);
+  _LordsState createState() => _LordsState(
+      filterTerms, filterOn, addToFavourites, removeFromFavourites, searchText);
 }
 
 class _LordsState extends State<LordsList> {
+  final Map filterTerms;
   final String searchText;
   List<Lord> lords;
   List<Lord> lordsUntouched;
   Function addToFavourites;
   Function removeFromFavourites;
+  bool filterOn;
   List<Interest> interests;
   bool gotLords = false;
   Future someFuture;
-  _LordsState(this.addToFavourites, this.removeFromFavourites, this.searchText);
+  _LordsState(this.filterTerms, this.filterOn, this.addToFavourites,
+      this.removeFromFavourites, this.searchText);
 
   Future<List<Lord>> getLordsNamesOnly() async {
     List<Lord> newLordsList = await transformLordsToList();
