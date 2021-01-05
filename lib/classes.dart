@@ -4,8 +4,8 @@ class Lord {
   String memberFrom;
   String party;
   String gender;
-  DateTime startedLording;
-  DateTime dob;
+  String startedLording;
+  String dob;
   String pictureUrl;
   List<Interest> interests;
 }

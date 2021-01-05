@@ -17,11 +17,124 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Icon cusIcon = Icon(Icons.search);
   Widget cusSearchBar = Text("F LORDS");
-  FocusNode myFocusNode;
-  String searchText = "initial text";
-  List<Lord> favouriteLordsList = [];
 
+  FocusNode myFocusNode;
+  String searchText = "";
+  List<Lord> favouriteLordsList = [];
+  bool searching = false;
   bool filterOn = false;
+  Map filterTerms = {'age': 'AGE', 'party': 'PARTY', 'type': 'TYPE'};
+
+  void handleFilterSelection(String value) {
+    print("HANDLING FILTER SELCTION AND SETTING STATE");
+    if (value.startsWith("AGE")) {
+      setState(() {
+        filterTerms['age'] = value.contains("ANY") ? "AGE" : value.substring(5);
+      });
+    }
+    if (value.startsWith("PARTY")) {
+      setState(() {
+        filterTerms['party'] =
+            value.contains("ANY") ? "PARTY" : value.substring(7);
+      });
+    }
+    if (value.startsWith("TYPE")) {
+      setState(() {
+        filterTerms['type'] =
+            value.contains("ANY") ? "TYPE" : value.substring(6);
+      });
+    }
+  }
+
+  void navigateToFavourites(context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                title: Text("Favourite Lords"),
+              ),
+              body: FavouritesScreen(favouriteLords: favouriteLordsList)));
+      // body: Text("HI")));
+    }));
+  }
+
+  void navigateToAbout(context) {
+    print("in about");
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                  icon: Icon(Icons.cancel),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              title: Text("Favourite Lords"),
+            ),
+            body: AboutPage(),
+          ));
+      // body: Text("HI")));
+    }));
+  }
+
+  void navigateToVisuals(context) {
+    print("in visuals");
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                title: Text("Favourite Lords"),
+              ),
+              body: VisualsPage()));
+      // body: Text("HI")));
+    }));
+  }
+
+  void handleMenuClick(String value, BuildContext context) {
+    if (value == 'Filter') {
+      setState(() {
+        filterTerms = filterOn
+            ? {'age': "AGE", 'party': "PARTY", 'type': "TYPE"}
+            : filterTerms;
+        filterOn = !filterOn;
+      });
+    }
+    if (value == "All Lords") {
+      setState(() {
+        filterOn = false;
+        searching = false;
+        filterTerms = {'age': "AGE", 'party': "PARTY", 'type': "TYPE"};
+      });
+    }
+    if (value == "About") {
+      navigateToAbout(context);
+    }
+    if (value == "Visuals") {
+      navigateToVisuals(context);
+    }
+  }
 
   void addToFavourites(lord) {
     print("ADDING TO FAVOURITES BIATCH");
@@ -39,7 +152,6 @@ class _MyAppState extends State<MyApp> {
     print(favouriteLordsList);
   }
 
-  Map filterTerms = {'age': "AGE", 'party': "PARTY", 'type': "TYPE"};
   @override
   void initState() {
     super.initState();
@@ -71,11 +183,11 @@ class _MyAppState extends State<MyApp> {
                             setState(() {
                               if (this.cusIcon.icon == Icons.search) {
                                 this.cusIcon = Icon(Icons.cancel);
-
                                 this.cusSearchBar = TextField(
                                   onChanged: (text) {
                                     print("IN ON CHANGED" + text);
                                     setState(() {
+                                      searching = true;
                                       this.searchText = text;
                                     });
                                   },
@@ -99,9 +211,8 @@ class _MyAppState extends State<MyApp> {
                               } else {
                                 setState(() {
                                   print("resetting state");
-                                  this.searchText = "initial text";
-                                  print(this.searchText);
-
+                                  this.searchText = "";
+                                  searching = false;
                                   this.cusIcon = Icon(Icons.search);
                                   this.cusSearchBar = Text("FUCKLORDS");
                                 });
@@ -210,8 +321,12 @@ class _MyAppState extends State<MyApp> {
                                     ),
                                     onSelected: handleFilterSelection,
                                     itemBuilder: (BuildContext context) {
-                                      return {'Hereditory', 'Other', 'ANY'}
-                                          .map((String choice) {
+                                      return {
+                                        'Hereditary',
+                                        'Bishop',
+                                        "Life Peer",
+                                        'ANY',
+                                      }.map((String choice) {
                                         return PopupMenuItem<String>(
                                           value: "TYPE: $choice",
                                           child: Text(
@@ -226,6 +341,7 @@ class _MyAppState extends State<MyApp> {
                           : Container(),
                       Expanded(
                           child: LordsList(
+                        searching: searching,
                         filterTerms: filterTerms,
                         searchText: searchText,
                         addToFavourites: addToFavourites,
@@ -234,115 +350,5 @@ class _MyAppState extends State<MyApp> {
                     ]),
                   ),
                 )));
-  }
-
-  void handleFilterSelection(String value) {
-    print(value);
-    if (value.startsWith("AGE")) {
-      setState(() {
-        filterTerms['age'] = value.contains("ANY") ? "AGE" : value.substring(4);
-      });
-    }
-    if (value.startsWith("PARTY")) {
-      setState(() {
-        filterTerms['party'] =
-            value.contains("ANY") ? "PARTY" : value.substring(6);
-      });
-    }
-    if (value.startsWith("TYPE")) {
-      setState(() {
-        filterTerms['type'] =
-            value.contains("ANY") ? "TYPE" : value.substring(5);
-      });
-    }
-  }
-
-  void navigateToFavourites(context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          home: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                    icon: Icon(Icons.cancel),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-                title: Text("Favourite Lords"),
-              ),
-              body: FavouritesScreen(favouriteLords: favouriteLordsList)));
-      // body: Text("HI")));
-    }));
-  }
-
-  void navigateToAbout(context) {
-    print("in about");
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          home: Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                  icon: Icon(Icons.cancel),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              title: Text("Favourite Lords"),
-            ),
-            body: AboutPage(),
-          ));
-      // body: Text("HI")));
-    }));
-  }
-
-  void navigateToVisuals(context) {
-    print("in visuals");
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          home: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                    icon: Icon(Icons.cancel),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-                title: Text("Favourite Lords"),
-              ),
-              body: VisualsPage()));
-      // body: Text("HI")));
-    }));
-  }
-
-  void handleMenuClick(String value, BuildContext context) {
-    if (value == 'Filter') {
-      print("IN FILTER: $filterOn");
-      setState(() {
-        filterOn = !filterOn;
-      });
-      print("IN FILTER: $filterOn");
-    }
-    if (value == "All Lords") {
-      print("IN ALL LORDS $filterOn");
-      setState(() {
-        filterOn = false;
-      });
-      print("IN ALL LORDS $filterOn");
-    }
-    if (value == "About") {
-      navigateToAbout(context);
-    }
-    if (value == "Visuals") {
-      navigateToVisuals(context);
-    }
   }
 }

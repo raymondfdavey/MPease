@@ -151,11 +151,10 @@ class _LordTileState extends State<LordTile> {
                   // Text('${lord.memberId}'),
 
                   Text('Gender: ${lord.gender}'),
-                  Text('Started Lording:' +
-                      DateFormat('yyyy-MM-dd').format(lord.startedLording)),
+                  Text('Started Lording: ${lord.startedLording}'),
                   Text('Type: ${lord.memberFrom}'),
                   Text('Party: ${lord.party}'),
-                  Text('Born: ' + DateFormat('yyyy-MM-dd').format(lord.dob)),
+                  Text('Age: ${lord.dob}'),
                 ])
               ]),
             ],
