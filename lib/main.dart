@@ -21,6 +21,7 @@ class _MyAppState extends State<MyApp> {
   FocusNode myFocusNode;
   String searchText = "";
   List<Lord> favouriteLordsList = [];
+  bool toggleThatDoesNothing = false;
   bool searching = false;
   bool filterOn = false;
   Map filterTerms = {'age': 'AGE', 'party': 'PARTY', 'type': 'TYPE'};
@@ -150,6 +151,12 @@ class _MyAppState extends State<MyApp> {
       favouriteLordsList.remove(lord);
     });
     print(favouriteLordsList);
+  }
+
+  void fakeSetState() {
+    setState(() {
+      toggleThatDoesNothing = !toggleThatDoesNothing;
+    });
   }
 
   @override
@@ -341,6 +348,7 @@ class _MyAppState extends State<MyApp> {
                           : Container(),
                       Expanded(
                           child: LordsList(
+                        fakeSetState: fakeSetState,
                         searching: searching,
                         filterTerms: filterTerms,
                         searchText: searchText,

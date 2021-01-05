@@ -1,5 +1,5 @@
 import 'package:MPease/LordTile.dart';
-import 'package:MPease/utilities.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
@@ -14,6 +14,7 @@ class LordsList extends StatefulWidget {
   final removeFromFavourites;
   final bool filterOn;
   final bool searching;
+  final fakeSetState;
 
   LordsList({
     Key key,
@@ -23,10 +24,11 @@ class LordsList extends StatefulWidget {
     this.addToFavourites,
     this.removeFromFavourites,
     this.searching,
+    this.fakeSetState,
   }) : super(key: key);
   @override
-  _LordsState createState() => _LordsState(
-      filterTerms, filterOn, addToFavourites, removeFromFavourites, searchText);
+  _LordsState createState() => _LordsState(filterTerms, filterOn,
+      addToFavourites, removeFromFavourites, searchText, fakeSetState);
 }
 
 class _LordsState extends State<LordsList> {
@@ -34,6 +36,7 @@ class _LordsState extends State<LordsList> {
   final String searchText;
   List<Lord> lords;
   List<Lord> lordsUntouched;
+  Function fakeSetState;
   Function addToFavourites;
   Function removeFromFavourites;
   bool filterOn;
@@ -41,7 +44,7 @@ class _LordsState extends State<LordsList> {
   bool gotLords = false;
   Future someFuture;
   _LordsState(this.filterTerms, this.filterOn, this.addToFavourites,
-      this.removeFromFavourites, this.searchText);
+      this.removeFromFavourites, this.searchText, this.fakeSetState);
   Map filterTermsDefault = {'age': 'AGE', 'party': 'PARTY', 'type': 'TYPE'};
   Future<List<Lord>> getLordsNamesOnly() async {
     List<Lord> newLordsList = await transformLordsToList();
@@ -61,7 +64,10 @@ class _LordsState extends State<LordsList> {
     });
   }
 
-  void filterOnDropdownTerms(Map filterTermsMap) {
+  List<Lord> filterOnDropdownTerms(Map filterTermsMap) {
+    List<Lord> forFilterHere = []..addAll(lordsUntouched);
+    List<Lord> filteredLordsHere = []..addAll(lordsUntouched);
+    print(filteredLordsHere.length);
     if (filterTermsMap["age"] != 'AGE') {
       print(filterTermsMap['age']);
     }
@@ -70,7 +76,15 @@ class _LordsState extends State<LordsList> {
     }
     if (filterTermsMap["type"] != 'TYPE') {
       print("FILTERING BY TYPE");
+      filteredLordsHere = forFilterHere
+          .where((lord) => lord.memberFrom
+              .toLowerCase()
+              .contains(filterTermsMap["type"].toLowerCase()))
+          .toList();
+      print(filteredLordsHere.length);
     }
+    print(filteredLordsHere.length);
+    return filteredLordsHere;
   }
 
   void filterLords(String searchTerm) {
@@ -98,28 +112,31 @@ class _LordsState extends State<LordsList> {
   @override
   Widget build(BuildContext context) {
     print("IN LORDS LIST WIDGET");
-    print(widget.searching);
-    print(filterTerms);
     if (widget.searching) {
       filterLords(widget.searchText);
     }
-
     if (!widget.searching && mapEquals(filterTermsDefault, filterTerms)) {
       setState(() {
+        print("in resetting lords set state");
         lords = lordsUntouched;
       });
     }
-
-    if (!mapEquals(filterTermsDefault, filterTerms)) {
-      filterOnDropdownTerms(filterTerms);
+    if (!mapEquals(filterTermsDefault, widget.filterTerms)) {
+      List<Lord> ans;
+      ans = filterOnDropdownTerms(widget.filterTerms);
+      setState(() {
+        print("IN FILTERING SET STATE");
+        lords = ans;
+        currentFilterTerms = widget.filterTerms;
+      });
     }
-
     return gotLords
         ? ListView.builder(
+            key: UniqueKey(),
             itemCount: lords.length,
             itemBuilder: (context, index) {
               return LordTile(
-                lord: lords[index],
+                lord: this.lords[index],
                 addToFavourites: addToFavourites,
                 removeFromFavourites: removeFromFavourites,
               );
