@@ -2,7 +2,6 @@ import 'package:MPease/lords-expansion-2.dart';
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
-import 'package:intl/intl.dart';
 import "lordDetailsScreen.dart";
 
 class LordTile extends StatefulWidget {
@@ -10,16 +9,18 @@ class LordTile extends StatefulWidget {
   final addToFavourites;
   final removeFromFavourites;
   final bool isFavouriteList;
+  final List<Lord> favouriteLordsList;
   LordTile(
       {Key key,
       this.lord,
       this.addToFavourites,
       this.removeFromFavourites,
-      this.isFavouriteList = false})
+      this.isFavouriteList = false,
+      this.favouriteLordsList})
       : super(key: key);
   @override
-  _LordTileState createState() => _LordTileState(
-      lord, addToFavourites, removeFromFavourites, isFavouriteList);
+  _LordTileState createState() => _LordTileState(lord, addToFavourites,
+      removeFromFavourites, isFavouriteList, favouriteLordsList);
 }
 
 class _LordTileState extends State<LordTile> {
@@ -27,8 +28,9 @@ class _LordTileState extends State<LordTile> {
   Function addToFavourites;
   Function removeFromFavourites;
   bool isFavouriteList;
+  List<Lord> favouriteLordsList;
   _LordTileState(this.lord, this.addToFavourites, this.removeFromFavourites,
-      this.isFavouriteList);
+      this.isFavouriteList, this.favouriteLordsList);
   bool fetchingUrl = true;
   bool urlError = false;
   bool isFavourite = false;
@@ -44,20 +46,6 @@ class _LordTileState extends State<LordTile> {
       setState(() {
         fetchingUrl = false;
         urlError = false;
-      });
-    }
-  }
-
-  void isFavouriteLordToggle() {
-    print("TOGGLING FAVOURITE IN");
-    print(lord);
-    if (isFavourite) {
-      setState(() {
-        isFavourite = false;
-      });
-    } else {
-      setState(() {
-        isFavourite = true;
       });
     }
   }
@@ -85,6 +73,24 @@ class _LordTileState extends State<LordTile> {
     }));
   }
 
+  void isFavouriteLordToggle() {
+    print("TOGGLING FAVOURITE IN");
+    print(lord);
+
+    setState(() {
+      isFavourite = !isFavourite;
+    });
+  }
+
+  @override
+  void initState() {
+    print("STARTING LORD TILE");
+    isFavourite =
+        favouriteLordsList != null ? favouriteLordsList.contains(lord) : false;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -106,7 +112,7 @@ class _LordTileState extends State<LordTile> {
                     icon: isFavourite
                         ? Icon(Icons.favorite)
                         : Icon(Icons.favorite_border),
-                    color: isFavourite ? Colors.red : null,
+                    color: isFavourite ? Colors.deepOrange[400] : null,
                   )
                 : null,
             children: <Widget>[

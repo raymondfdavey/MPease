@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 
-String getAge(DateTime dob) {
+int getAge(DateTime dob) {
   DateTime currentDate = DateTime.now();
   int age = currentDate.year - dob.year;
   int month1 = currentDate.month;
@@ -15,7 +15,7 @@ String getAge(DateTime dob) {
       age--;
     }
   }
-  return age.toString();
+  return age;
 }
 
 String getYearsLording(DateTime dateStarted) {

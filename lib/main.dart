@@ -48,6 +48,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   void navigateToFavourites(context) {
+    setState(() {
+      favouriteLordsList = favouriteLordsList;
+    });
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -139,17 +142,17 @@ class _MyAppState extends State<MyApp> {
 
   void addToFavourites(lord) {
     print("ADDING TO FAVOURITES BIATCH");
-    setState(() {
-      favouriteLordsList.add(lord);
-    });
+    // setState(() {
+    favouriteLordsList.add(lord);
+    // });
     print(favouriteLordsList);
   }
 
   void removeFromFavourites(lord) {
     print("REMOVING FROM FAVOURITES DUDE");
-    setState(() {
-      favouriteLordsList.remove(lord);
-    });
+    // setState(() {
+    favouriteLordsList.remove(lord);
+    // });
     print(favouriteLordsList);
   }
 
@@ -305,12 +308,17 @@ class _MyAppState extends State<MyApp> {
                                     onSelected: handleFilterSelection,
                                     itemBuilder: (BuildContext context) {
                                       return {
-                                        'Conservative',
-                                        'Labour',
-                                        'Lib Dem',
-                                        'Green',
-                                        'Other',
-                                        'ANY',
+                                        "Conservative",
+                                        "Labour",
+                                        "Liberal Democrat",
+                                        "Green Party",
+                                        "Democratic Unionist Party",
+                                        "Ulster Unionist Party",
+                                        "Plaid Cymru",
+                                        "Crossbench",
+                                        "Non-affiliated",
+                                        "Other",
+                                        "ANY"
                                       }.map((String choice) {
                                         return PopupMenuItem<String>(
                                           value: "PARTY: $choice",
@@ -348,6 +356,7 @@ class _MyAppState extends State<MyApp> {
                           : Container(),
                       Expanded(
                           child: LordsList(
+                        favouriteLordsList: favouriteLordsList,
                         fakeSetState: fakeSetState,
                         searching: searching,
                         filterTerms: filterTerms,

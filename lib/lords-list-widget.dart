@@ -1,5 +1,4 @@
 import 'package:MPease/LordTile.dart';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'network.dart';
 import 'classes.dart';
@@ -15,6 +14,7 @@ class LordsList extends StatefulWidget {
   final bool filterOn;
   final bool searching;
   final fakeSetState;
+  final List<Lord> favouriteLordsList;
 
   LordsList({
     Key key,
@@ -25,6 +25,7 @@ class LordsList extends StatefulWidget {
     this.removeFromFavourites,
     this.searching,
     this.fakeSetState,
+    this.favouriteLordsList,
   }) : super(key: key);
   @override
   _LordsState createState() => _LordsState(filterTerms, filterOn,
@@ -67,23 +68,72 @@ class _LordsState extends State<LordsList> {
   List<Lord> filterOnDropdownTerms(Map filterTermsMap) {
     List<Lord> forFilterHere = []..addAll(lordsUntouched);
     List<Lord> filteredLordsHere = []..addAll(lordsUntouched);
-    print(filteredLordsHere.length);
     if (filterTermsMap["age"] != 'AGE') {
-      print(filterTermsMap['age']);
+      if (filterTermsMap["age"] == '< 50') {
+        filteredLordsHere =
+            forFilterHere.where((lord) => lord.dob < 50).toList();
+      }
+      if (filterTermsMap["age"] == '50 - 60') {
+        filteredLordsHere = forFilterHere
+            .where((lord) => lord.dob >= 50 && lord.dob < 60)
+            .toList();
+      }
+      if (filterTermsMap["age"] == '60-70') {
+        filteredLordsHere = forFilterHere
+            .where((lord) => lord.dob >= 60 && lord.dob < 70)
+            .toList();
+      }
+      if (filterTermsMap["age"] == '70-80') {
+        filteredLordsHere = forFilterHere
+            .where((lord) => lord.dob >= 70 && lord.dob < 80)
+            .toList();
+      }
+      if (filterTermsMap["age"] == '80-90') {
+        filteredLordsHere = forFilterHere
+            .where((lord) => lord.dob >= 80 && lord.dob < 90)
+            .toList();
+      }
+      if (filterTermsMap["age"] == '90+') {
+        filteredLordsHere =
+            forFilterHere.where((lord) => lord.dob >= 90).toList();
+      }
     }
     if (filterTermsMap["party"] != 'PARTY') {
-      print(filterTermsMap['party']);
+      if (filterTermsMap['party'] == 'Other') {
+        filteredLordsHere = filteredLordsHere != null
+            ? filteredLordsHere
+                .where((lord) =>
+                    lord.party.contains("Independent") ||
+                    lord.party.contains("Speaker"))
+                .toList()
+            : forFilterHere
+                .where((lord) =>
+                    lord.party.contains("Independent") ||
+                    lord.party.contains("Speaker"))
+                .toList();
+      } else {
+        filteredLordsHere = filteredLordsHere != null
+            ? filteredLordsHere
+                .where((lord) => lord.party.contains(filterTermsMap['party']))
+                .toList()
+            : forFilterHere
+                .where((lord) => lord.party.contains(filterTermsMap['party']))
+                .toList();
+      }
     }
     if (filterTermsMap["type"] != 'TYPE') {
-      print("FILTERING BY TYPE");
-      filteredLordsHere = forFilterHere
-          .where((lord) => lord.memberFrom
-              .toLowerCase()
-              .contains(filterTermsMap["type"].toLowerCase()))
-          .toList();
-      print(filteredLordsHere.length);
+      filteredLordsHere = filteredLordsHere != null
+          ? filteredLordsHere
+              .where((lord) => lord.memberFrom
+                  .toLowerCase()
+                  .contains(filterTermsMap["type"].toLowerCase()))
+              .toList()
+          : forFilterHere
+              .where((lord) => lord.memberFrom
+                  .toLowerCase()
+                  .contains(filterTermsMap["type"].toLowerCase()))
+              .toList();
     }
-    print(filteredLordsHere.length);
     return filteredLordsHere;
   }
 
@@ -136,6 +186,7 @@ class _LordsState extends State<LordsList> {
             itemCount: lords.length,
             itemBuilder: (context, index) {
               return LordTile(
+                favouriteLordsList: widget.favouriteLordsList,
                 lord: this.lords[index],
                 addToFavourites: addToFavourites,
                 removeFromFavourites: removeFromFavourites,

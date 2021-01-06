@@ -5,7 +5,7 @@ class Lord {
   String party;
   String gender;
   String startedLording;
-  String dob;
+  int dob;
   String pictureUrl;
   List<Interest> interests;
 }
