@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'classes.dart';
+import 'utilities.dart';
 
 final String baseUrlInterests =
     'http://eldaddp.azurewebsites.net/lordsregisteredinterests.json';
@@ -109,9 +110,10 @@ Future<List<Lord>> transformLordsToList() async {
       newLordListedItem.memberFrom = lord["MemberFrom"];
       newLordListedItem.party = lord["Party"]["#text"];
       newLordListedItem.gender = lord["Gender"];
-      newLordListedItem.dob = DateTime.parse(lord["DateOfBirth"]);
+      newLordListedItem.dob = getAge(DateTime.parse(lord["DateOfBirth"]));
       newLordListedItem.interests = listOfInterests;
-      newLordListedItem.startedLording = DateTime.parse(lord["HouseStartDate"]);
+      newLordListedItem.startedLording =
+          getYearsLording(DateTime.parse(lord["HouseStartDate"]));
       newLordListedItem.pictureUrl =
           'https://members-api.parliament.uk/api/Members/' +
               '$memberId' +
